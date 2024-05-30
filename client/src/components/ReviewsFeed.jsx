@@ -17,7 +17,7 @@ const ReviewsFeed = ({ chapter, novel }) => {
     refetch,
     isRefetching,
   } = useQuery({
-    queryKey: ["reviews"],
+    queryKey: ["reviews" + (chapter ? chapter._id : novel._id)],
     queryFn: async () => {
       try {
         const res = chapter
@@ -69,7 +69,7 @@ const ReviewsFeed = ({ chapter, novel }) => {
       }
     },
     onSuccess: () => {
-      toast.success("Review created successfully");
+      toast.success("Comment created successfully");
     },
     onError: (e) => {
       toast.error(e.message);
@@ -94,7 +94,7 @@ const ReviewsFeed = ({ chapter, novel }) => {
       }
     },
     onSuccess: () => {
-      toast.success("Review created successfully");
+      toast.success("Comment created successfully");
     },
     onError: (e) => {
       toast.error(e.message);
@@ -110,7 +110,7 @@ const ReviewsFeed = ({ chapter, novel }) => {
   const handleSend = (e) => {
     e.preventDefault();
     if (!authUser) {
-      toast.error("To add a review you must log in");
+      toast.error("To add a comment you must log in");
     } else {
       if (novel) {
         addNovelReview.mutate();
@@ -123,7 +123,7 @@ const ReviewsFeed = ({ chapter, novel }) => {
     <Box className="p-4">
       <Box className="flex flex-col gap-4">
         <Typography className="px-4" fontSize={20} fontWeight={700}>
-          Create a review
+          Add a comment
         </Typography>
         <Box className="px-4">
           <MDEditor
@@ -154,8 +154,9 @@ const ReviewsFeed = ({ chapter, novel }) => {
               ))}
               <Pagination
                 count={Math.ceil(
-                  (chapter ? chapter.reviews.length : novel.reviews.length) /
-                    limit
+                  chapter
+                    ? parseInt(chapter.reviews.length) / limit
+                    : parseInt(novel.reviews.length) / limit
                 )}
                 page={page}
                 onChange={handlePageChange}

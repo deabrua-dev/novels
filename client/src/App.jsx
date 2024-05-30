@@ -1,22 +1,24 @@
+import { Toaster } from "react-hot-toast";
 import { Route, Routes } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { Backdrop, CircularProgress, Container } from "@mui/material";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Profile from "./pages/Profile";
-import CreateNovel from "./pages/CreateNovel";
-import Footer from "./components/Footer";
 import Novel from "./pages/Novel";
+import Genre from "./pages/Genre";
+import Profile from "./pages/Profile";
 import Chapter from "./pages/Chapter";
-import { Backdrop, CircularProgress, Container } from "@mui/material";
+import Register from "./pages/Register";
+import CreateNovel from "./pages/CreateNovel";
+
+import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
-import { useQuery } from "@tanstack/react-query";
 
-import { Toaster } from "react-hot-toast";
-
-import PrivateRoute from "./middleware/PrivateRoute";
 import AnonymousRoute from "./middleware/AnonymousRoute";
 import ModeratorRoute from "./middleware/ModeratorRoute";
+import Author from "./pages/Author";
+import Year from "./pages/Year";
 
 function App() {
   const { data: authUser, isLoading } = useQuery({
@@ -57,6 +59,9 @@ function App() {
           <Route path="/profile/:userId" element={<Profile />} />
           <Route path="/novel/:novelId" element={<Novel />} />
           <Route path="/chapter/:chapterId" element={<Chapter />} />
+          <Route path="/genre/:genreId" element={<Genre />} />
+          <Route path="/author/:author" element={<Author />} />
+          <Route path="/year/:year" element={<Year />} />
           <Route element={<AnonymousRoute />}>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />

@@ -1,9 +1,16 @@
 import { Router } from "express";
-import { getAll } from "../controllers/genre.js";
+import {
+  getAll,
+  getGenre,
+  getNovelsWithGenre,
+  countNovels,
+} from "../controllers/genre.js";
 
 const router = Router();
 
 router.get("/all", getAll);
-router.get("/:id");
+router.get("/:id", getGenre);
+router.get("/countNovels/:id", countNovels);
+router.get("/novels/:id", getNovelsWithGenre);
 
 export default router;

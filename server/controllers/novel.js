@@ -194,9 +194,34 @@ export const getReviews = async (req, res) => {
     const reviews = await Review.find({ novel: novelId }, null, {
       skip: page * limit,
       limit: limit,
-    });
+    }).sort({ createdAt: -1 });
 
+    if (reviews.length === 1) {
+      return res.status(404).json({ error: "Reviews not found" });
+    }
     res.status(200).json(reviews);
+  } catch (error) {
+    console.log("Error in getReviews: ", error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getGenres = async (req, res) => {
+  try {
+    const novelId = req.params.id;
+    const novel = await Novel.findById(novelId);
+    if (!novel) {
+      return res.status(404).json({ error: "Novel not found" });
+    }
+    const genres = [];
+    for (const genreId of novel.genres) {
+      const genre = await Genre.findById(genreId);
+      if (genre) genres.push(genre);
+    }
+    if (genres.length === 0) {
+      return res.status(404).json({ error: "Genres not found" });
+    }
+    res.status(200).json(genres);
   } catch (error) {
     console.log("Error in getReviews: ", error.message);
     res.status(500).json({ error: error.message });
@@ -232,6 +257,72 @@ export const savedUnSavedByUser = async (req, res) => {
     }
   } catch (error) {
     console.log("Error in savedUnSavedByUser: ", error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getNovelsByAuthor = async (req, res) => {
+  try {
+    const author = req.params.year;
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const novels = await Novel.find({ author: author }, null, {
+      skip: page * limit,
+      limit: limit,
+    });
+    if (novels.length === 0) {
+      return res.status(404).json({ error: "Novels not found" });
+    }
+    res.status(200).json(novels);
+  } catch (error) {
+    console.log("Error in getNovelsByAuthor: ", error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getNovelsByYear = async (req, res) => {
+  try {
+    const year = req.params.year;
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const novels = await Novel.find({ year: year }, null, {
+      skip: page * limit,
+      limit: limit,
+    });
+    if (novels.length === 0) {
+      return res.status(404).json({ error: "Novels not found" });
+    }
+    res.status(200).json(novels);
+  } catch (error) {
+    console.log("Error in getNovelsByYear: ", error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const countNovelsByYear = async (req, res) => {
+  try {
+    const year = req.params.year;
+    const novels = await Novel.find({ year: year });
+    if (novels.length === 0) {
+      return res.status(404).json({ error: "Novels not found" });
+    }
+    res.status(200).json(novels.length);
+  } catch (error) {
+    console.log("Error in getNovelsByYear: ", error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const countNovelsByAuthor = async (req, res) => {
+  try {
+    const author = req.params.author;
+    const novels = await Novel.find({ author: author });
+    if (novels.length === 0) {
+      return res.status(404).json({ error: "Novels not found" });
+    }
+    res.status(200).json(novels.length);
+  } catch (error) {
+    console.log("Error in getNovelsByYear: ", error.message);
     res.status(500).json({ error: error.message });
   }
 };

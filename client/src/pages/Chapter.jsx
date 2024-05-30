@@ -109,6 +109,7 @@ const Chapter = () => {
   const queryClient = useQueryClient();
   useEffect(() => {
     queryClient.refetchQueries();
+    onPageLoad();
   }, [chapterId]);
 
   return (
@@ -154,7 +155,7 @@ const Chapter = () => {
           <Typography variant="h6" fontWeight={700} className="pt-4">
             Chapter {chapter.chapterNumber} {chapter.title}
           </Typography>
-          <Typography fontSize={18}>
+          <Typography fontSize={18} sx={{ whiteSpace: "pre-wrap" }}>
             {chapter.body.split("\\n").map((item, i) => {
               return (
                 <span key={i}>

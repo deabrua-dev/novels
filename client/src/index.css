@@ -7,4 +7,6 @@ body {
     background-color: #F5F5F5 !important;
 }
 
-  
+.txt:hover {
+    text-decoration: underline;
+}

@@ -45,7 +45,7 @@ const ReviewTile = ({ review }) => {
               </IconButton>
             </Grid>
             <Grid justifyContent="left" item xs>
-              <Typography variant="h4" fontSize={18}>
+              <Typography variant="h4" fontSize={18} fontWeight={700}>
                 {user.username}
               </Typography>
               <Typography fontSize={18}>{review.body}</Typography>

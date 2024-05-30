@@ -27,11 +27,11 @@ export const addChapter = async (req, res) => {
       title: chapterTitle,
       body: chapterBody,
     });
+    await newChapter.save();
     await Novel.updateOne(
       { _id: novelId },
       { $push: { chapters: newChapter._id } }
     );
-    await newChapter.save();
     res.status(201).json(newChapter);
   } catch (error) {
     console.log("Error in addChapter: ", error.message);
@@ -137,11 +137,11 @@ export const getReviews = async (req, res) => {
     const reviews = await Review.find({ chapter: chapterId }, null, {
       skip: page * limit,
       limit: limit,
-    });
-    if (reviews.length < 1) {
+    }).sort({ createdAt: -1 });
+    
+    if (reviews.length === 1) {
       return res.status(404).json({ error: "Reviews not found" });
     }
-
     res.status(200).json(reviews);
   } catch (error) {
     console.log("Error in : ", error.message);

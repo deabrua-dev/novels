@@ -18,6 +18,7 @@ router.get("/next-chapter/:id", getNext);
 router.get("/prev-chapter/:id", getPrev);
 router.get("/novel/:id", getAllChapters);
 router.get("/reviews/:id", getReviews);
+
 router.post("/add-chapter/", addChapter);
 router.post("/review/:id", checkAuth, reviewOnChapter);
 router.post("/addViewCount/:id", addViewCount);

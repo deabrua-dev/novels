@@ -27,7 +27,24 @@ const Novel = () => {
 
   const [chapterBody, setChapterBody] = useState("");
   const [chapterTitle, setChapterTitle] = useState("");
-  const [rating, setRating] = useState(0);
+  const [rating, setRating] = useState(0.0);
+
+  const getGenres = useQuery({
+    queryKey: ["genres"],
+    queryFn: async () => {
+      try {
+        const res = await fetch("/api/novel/genres/" + novelId);
+        const data = await res.json();
+        if (data.error) return null;
+        if (!res.ok) {
+          throw new Error(data.error || "Something went wrong");
+        }
+        return data;
+      } catch (error) {
+        throw new Error(error);
+      }
+    },
+  });
 
   const {
     data: novel,
@@ -142,8 +159,10 @@ const Novel = () => {
   const handleChapterSave = (e) => {
     e.preventDefault();
     addChapter();
-    setChapterTitle("");
-    setChapterBody("");
+  };
+
+  const handleNovelSave = (e) => {
+    e.preventDefault();
   };
 
   const onPageLoad = () => {
@@ -167,7 +186,11 @@ const Novel = () => {
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setChapterTitle("");
+    setChapterBody("");
+    setOpen(false);
+  };
 
   return (
     <Paper className="py-5 px-10 mt-4">
@@ -218,17 +241,38 @@ const Novel = () => {
                   <Typography fontSize={16}>{novel.viewsCount}</Typography>
                 </Box>
               </Box>
-              <Box className="my-2">
-                <Typography color={"gray"}>Author: {novel.author}</Typography>
+              <Box className="flex gap-2 my-2">
+                <Typography color={"gray"}>Author: </Typography>
+                <Link to={"/author/" + novel.author}>
+                  <Typography>{novel.author}</Typography>
+                </Link>
               </Box>
-              <Box className="my-2">
-                <Typography color={"gray"}>Year: {novel.year}</Typography>
+              <Box className="flex gap-2 my-2">
+                <Typography color={"gray"}>Year: </Typography>
+                <Link to={"/year/" + novel.year}>
+                  <Typography>{novel.year}</Typography>
+                </Link>
               </Box>
+              {!getGenres.isLoading && getGenres.data && (
+                <Box className="flex gap-2 my-2">
+                  <Typography color={"gray"}>Genres:</Typography>
+                  {getGenres.data.map((genre) => (
+                    <Link key={genre._id} to={"/genre/" + genre._id}>
+                      <Typography className="no-underline hover:underline">
+                        {genre.name}
+                      </Typography>
+                    </Link>
+                  ))}
+                </Box>
+              )}
+
               <Box>
-                {isPending && isLoading && (
-                  <Box>
+                {(isPending || isLoading) && (
+                  <Box className="flex items-center gap-2">
                     <Rating value={rating} precision={0.5} readOnly />
-                    <Typography fontSize={20}>{rating}</Typography>
+                    <Typography fontSize={20}>
+                      {parseFloat(rating).toFixed(2)}
+                    </Typography>
                     <Typography>({novel.starRating.length} ratings)</Typography>
                   </Box>
                 )}
@@ -239,7 +283,9 @@ const Novel = () => {
                       onChange={(e) => handleRatingSet(e)}
                       precision={0.5}
                     />
-                    <Typography fontSize={20}>{rating}</Typography>
+                    <Typography fontSize={20}>
+                      {parseFloat(rating).toFixed(2)}
+                    </Typography>
                     <Typography>({novel.starRating.length} ratings)</Typography>
                   </Box>
                 )}
@@ -251,7 +297,9 @@ const Novel = () => {
                       precision={0.5}
                       readOnly
                     />
-                    <Typography fontSize={20}>{rating}</Typography>
+                    <Typography fontSize={20}>
+                      {parseFloat(rating).toFixed(2)}
+                    </Typography>
                     <Typography>({novel.starRating.length} ratings)</Typography>
                   </Box>
                 )}
@@ -272,7 +320,11 @@ const Novel = () => {
                   Read
                 </Button>
                 {authUser && (
-                  <Button variant="contained" size="large">
+                  <Button
+                    variant="contained"
+                    size="large"
+                    onClick={handleNovelSave}
+                  >
                     Add to library
                   </Button>
                 )}
