@@ -238,19 +238,25 @@ const Novel = () => {
                 </Box>
                 <Box className="flex align-middle gap-2 flex-nowrap">
                   <Visibility />
-                  <Typography fontSize={16}>{novel.viewsCount}</Typography>
+                  <Typography fontSize={16}>
+                    {novel.viewsCount.toLocaleString()}
+                  </Typography>
                 </Box>
               </Box>
               <Box className="flex gap-2 my-2">
                 <Typography color={"gray"}>Author: </Typography>
                 <Link to={"/author/" + novel.author}>
-                  <Typography>{novel.author}</Typography>
+                  <Typography className="no-underline hover:underline hover:text-cyan-600">
+                    {novel.author}
+                  </Typography>
                 </Link>
               </Box>
               <Box className="flex gap-2 my-2">
                 <Typography color={"gray"}>Year: </Typography>
                 <Link to={"/year/" + novel.year}>
-                  <Typography>{novel.year}</Typography>
+                  <Typography className="no-underline hover:underline hover:text-cyan-600">
+                    {novel.year}
+                  </Typography>
                 </Link>
               </Box>
               {!getGenres.isLoading && getGenres.data && (
@@ -258,7 +264,7 @@ const Novel = () => {
                   <Typography color={"gray"}>Genres:</Typography>
                   {getGenres.data.map((genre) => (
                     <Link key={genre._id} to={"/genre/" + genre._id}>
-                      <Typography className="no-underline hover:underline">
+                      <Typography className="no-underline hover:underline hover:text-cyan-600">
                         {genre.name}
                       </Typography>
                     </Link>

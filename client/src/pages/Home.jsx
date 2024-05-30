@@ -78,26 +78,24 @@ const Home = () => {
           <CircularProgress color="inherit" />
         </Backdrop>
       )}
-      {!isLoading && novels && (
+      {(isLoading || isRefetching) && (
         <Box>
-          {isRefetching && (
-            <Box>
-              <Skeleton variant="rectengular" height={232} />
-              <Skeleton variant="rectengular" height={232} />
-              <Skeleton variant="rectengular" height={232} />
-            </Box>
-          )}
-          {!isRefetching && (
-            <Box>
-              <NovelsFeed novels={novels} />
-              <Pagination
-                count={Math.ceil(parseInt(novels_l) / limit)}
-                page={page}
-                onChange={handlePageChange}
-                shape="rounded"
-              />
-            </Box>
-          )}
+          <Skeleton variant="rectengular" height={232} />
+          <Skeleton variant="rectengular" height={232} />
+          <Skeleton variant="rectengular" height={232} />
+        </Box>
+      )}
+      {!isLoading && !isRefetching && novels && (
+        <Box>
+          <Box>
+            <NovelsFeed novels={novels} />
+            <Pagination
+              count={Math.ceil(parseInt(novels_l) / limit)}
+              page={page}
+              onChange={handlePageChange}
+              shape="rounded"
+            />
+          </Box>
         </Box>
       )}
     </Paper>

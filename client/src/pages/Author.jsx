@@ -16,12 +16,13 @@ import { useParams } from "react-router-dom";
 const Author = () => {
   const { author } = useParams();
   const [page, setPage] = useState(1);
-  const limit = 2;
+  const limit = 10;
+
   const { data: novels_l } = useQuery({
     queryKey: ["novels_l" + author],
     queryFn: async () => {
       try {
-        const res = await fetch("/api/novels/countNovelsByAuthor/" + author);
+        const res = await fetch("/api/novels/countByAuthor/" + author);
         const data = await res.json();
 
         if (!res.ok) {
@@ -85,27 +86,23 @@ const Author = () => {
           <CircularProgress color="inherit" />
         </Backdrop>
       )}
-      {!isLoading && novels && (
+      {(isLoading || isRefetching) && (
         <Box>
-          {isRefetching && (
-            <Box>
-              <Skeleton variant="rectengular" height={232} />
-              <Skeleton variant="rectengular" height={232} />
-              <Skeleton variant="rectengular" height={232} />
-            </Box>
-          )}
-          {!isRefetching && (
-            <Box>
-              <Typography variant="h4">Author: {author}</Typography>
-              <NovelsFeed novels={novels} />
-              <Pagination
-                count={Math.ceil(parseInt(novels_l) / limit)}
-                page={page}
-                onChange={handlePageChange}
-                shape="rounded"
-              />
-            </Box>
-          )}
+          <Skeleton variant="rectengular" height={232} />
+          <Skeleton variant="rectengular" height={232} />
+          <Skeleton variant="rectengular" height={232} />
+        </Box>
+      )}
+      {!isLoading && !isRefetching && novels && (
+        <Box>
+          <Typography variant="h4">Author: {author}</Typography>
+          <NovelsFeed novels={novels} />
+          <Pagination
+            count={Math.ceil(parseInt(novels_l) / limit)}
+            page={page}
+            onChange={handlePageChange}
+            shape="rounded"
+          />
         </Box>
       )}
     </Paper>

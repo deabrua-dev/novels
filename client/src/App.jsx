@@ -19,6 +19,7 @@ import AnonymousRoute from "./middleware/AnonymousRoute";
 import ModeratorRoute from "./middleware/ModeratorRoute";
 import Author from "./pages/Author";
 import Year from "./pages/Year";
+import Page404 from "./pages/Page404";
 
 function App() {
   const { data: authUser, isLoading } = useQuery({
@@ -56,12 +57,13 @@ function App() {
       <Container maxWidth="lg">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/profile/:userId" element={<Profile />} />
+          <Route path="/404" element={<Page404 />} />
+          <Route path="/year/:year" element={<Year />} />
           <Route path="/novel/:novelId" element={<Novel />} />
-          <Route path="/chapter/:chapterId" element={<Chapter />} />
           <Route path="/genre/:genreId" element={<Genre />} />
           <Route path="/author/:author" element={<Author />} />
-          <Route path="/year/:year" element={<Year />} />
+          <Route path="/profile/:userId" element={<Profile />} />
+          <Route path="/chapter/:chapterId" element={<Chapter />} />
           <Route element={<AnonymousRoute />}>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />

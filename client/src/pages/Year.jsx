@@ -11,17 +11,17 @@ import {
 } from "@mui/material";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 
 const Year = () => {
   const { year } = useParams();
   const [page, setPage] = useState(1);
-  const limit = 2;
+  const limit = 10;
   const { data: novels_l } = useQuery({
     queryKey: ["novels_l" + year],
     queryFn: async () => {
       try {
-        const res = await fetch("/api/novels/countNovelsByYear/" + year);
+        const res = await fetch("/api/novel/countByYear/" + year);
         const data = await res.json();
 
         if (!res.ok) {
@@ -60,9 +60,6 @@ const Year = () => {
         throw new Error(error);
       }
     },
-    onError: (error) => {
-      toast.error(error.message);
-    },
   });
   useEffect(() => {
     refetch();
@@ -80,27 +77,24 @@ const Year = () => {
           <CircularProgress color="inherit" />
         </Backdrop>
       )}
-      {!isLoading && novels && (
+      {(isLoading || isRefetching) && (
         <Box>
-          {isRefetching && (
-            <Box>
-              <Skeleton variant="rectengular" height={232} />
-              <Skeleton variant="rectengular" height={232} />
-              <Skeleton variant="rectengular" height={232} />
-            </Box>
-          )}
-          {!isRefetching && (
-            <Box>
-              <Typography variant="h4">Year: {year}</Typography>
-              <NovelsFeed novels={novels} />
-              <Pagination
-                count={Math.ceil(parseInt(novels_l) / limit)}
-                page={page}
-                onChange={handlePageChange}
-                shape="rounded"
-              />
-            </Box>
-          )}
+          <Skeleton variant="rectengular" height={232} />
+          <Skeleton variant="rectengular" height={232} />
+          <Skeleton variant="rectengular" height={232} />
+        </Box>
+      )}
+      {!isLoading && !novels && <Navigate to={"/404"} />}
+      {!isLoading && !isRefetching && novels && (
+        <Box>
+          <Typography variant="h4">Year: {year}</Typography>
+          <NovelsFeed novels={novels} />
+          <Pagination
+            count={Math.ceil(parseInt(novels_l) / limit)}
+            page={page}
+            onChange={handlePageChange}
+            shape="rounded"
+          />
         </Box>
       )}
     </Paper>

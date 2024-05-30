@@ -14,8 +14,8 @@ import {
   savedUnSavedByUser,
   getNovelsByAuthor,
   getNovelsByYear,
-  countNovelsByYear,
-  countNovelsByAuthor,
+  countByYear,
+  countByAuthor,
 } from "../controllers/novel.js";
 import { checkAuth } from "../middleware/checkAuth.js";
 
@@ -28,11 +28,12 @@ router.get("/novels", getNovels);
 router.get("/get/:id", getNovel);
 router.get("/reviews/:id", getReviews);
 router.get("/genres/:id", getGenres);
-router.get("/author/:author", getNovelsByAuthor);
-router.get("/year/:year", getNovelsByYear);
 
-router.get("/countNovelsByYear/:year", countNovelsByYear);
-router.get("/countNovelsByAuthor/:author", countNovelsByAuthor);
+router.get("/year/:year", getNovelsByYear);
+router.get("/author/:author", getNovelsByAuthor);
+
+router.get("/countByYear/:year", countByYear);
+router.get("/countByAuthor/:author", countByAuthor);
 
 router.post("/addViewCount/:id", addViewCount);
 router.post("/create", checkAuth, createNovel);

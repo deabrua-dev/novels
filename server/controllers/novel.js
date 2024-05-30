@@ -299,30 +299,24 @@ export const getNovelsByYear = async (req, res) => {
   }
 };
 
-export const countNovelsByYear = async (req, res) => {
+export const countByYear = async (req, res) => {
   try {
     const year = req.params.year;
     const novels = await Novel.find({ year: year });
-    if (novels.length === 0) {
-      return res.status(404).json({ error: "Novels not found" });
-    }
     res.status(200).json(novels.length);
   } catch (error) {
-    console.log("Error in getNovelsByYear: ", error.message);
+    console.log("Error in countByYear: ", error.message);
     res.status(500).json({ error: error.message });
   }
 };
 
-export const countNovelsByAuthor = async (req, res) => {
+export const countByAuthor = async (req, res) => {
   try {
     const author = req.params.author;
     const novels = await Novel.find({ author: author });
-    if (novels.length === 0) {
-      return res.status(404).json({ error: "Novels not found" });
-    }
     res.status(200).json(novels.length);
   } catch (error) {
-    console.log("Error in getNovelsByYear: ", error.message);
+    console.log("Error in countByAuthor: ", error.message);
     res.status(500).json({ error: error.message });
   }
 };

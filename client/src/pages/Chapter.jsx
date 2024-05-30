@@ -169,13 +169,13 @@ const Chapter = () => {
             <Box className="flex gap-1">
               <Visibility />
               <Typography fontSize={16} fontWeight={400}>
-                {chapter.viewsCount}
+                {chapter.viewsCount.toLocaleString()}
               </Typography>
             </Box>
             <Box className="flex gap-1">
               <ChatBubble />
               <Typography fontSize={16} fontWeight={400}>
-                {chapter.reviews.length}
+                {chapter.reviews.length.toLocaleString()}
               </Typography>
             </Box>
           </Box>
