@@ -1,55 +1,34 @@
 import { useQuery } from "@tanstack/react-query";
-import NovelsFeed from "../components/NovelsFeed";
 import {
   Box,
-  Skeleton,
-  Backdrop,
   CircularProgress,
-  Pagination,
   Paper,
   Typography,
+  Backdrop,
+  Pagination,
 } from "@mui/material";
 import toast from "react-hot-toast";
-import { useEffect, useState } from "react";
+import SavedFeed from "../../components/SavedFeed";
 import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-const Author = () => {
-  const { author } = useParams();
+const Saved = () => {
+  const { userId } = useParams();
+  const { data: authUser } = useQuery({ queryKey: ["authUser"] });
   const [page, setPage] = useState(1);
   const limit = 10;
 
-  const { data: novels_l } = useQuery({
-    queryKey: ["novels_l" + author],
-    queryFn: async () => {
-      try {
-        const res = await fetch("/api/novels/countByAuthor/" + author);
-        const data = await res.json();
-
-        if (!res.ok) {
-          throw new Error(data.error || "Something went wrong");
-        }
-
-        return data;
-      } catch (error) {
-        throw new Error(error);
-      }
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
   const {
     data: novels,
     isLoading,
     refetch,
-    isRefetching,
   } = useQuery({
-    queryKey: ["novels"],
+    queryKey: ["novels" + userId],
     queryFn: async () => {
       try {
         const res = await fetch(
-          "/api/novel/author/" +
-            author +
+          "/api/user/saves/" +
+            userId +
             "?page=" +
             (page - 1) +
             "&limit=" +
@@ -77,7 +56,7 @@ const Author = () => {
     setPage(value);
   };
   return (
-    <Paper className="flex flex-col flex-nowrap gap-4 p-2 mt-4">
+    <Paper className="flex flex-col flex-nowrap gap-4 p-2 my-4">
       {isLoading && (
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -86,19 +65,12 @@ const Author = () => {
           <CircularProgress color="inherit" />
         </Backdrop>
       )}
-      {(isLoading || isRefetching) && (
+      {!isLoading && novels && (
         <Box>
-          <Skeleton variant="rectengular" height={232} />
-          <Skeleton variant="rectengular" height={232} />
-          <Skeleton variant="rectengular" height={232} />
-        </Box>
-      )}
-      {!isLoading && !isRefetching && novels && (
-        <Box>
-          <Typography variant="h4">Author: {author}</Typography>
-          <NovelsFeed novels={novels} />
+          <Typography variant="h4">Bookmarks</Typography>
+          <SavedFeed novels={novels} />
           <Pagination
-            count={Math.ceil(parseInt(novels_l) / limit)}
+            count={Math.ceil(parseInt(authUser.saves.length) / limit)}
             page={page}
             onChange={handlePageChange}
             shape="rounded"
@@ -109,4 +81,4 @@ const Author = () => {
   );
 };
 
-export default Author;
+export default Saved;

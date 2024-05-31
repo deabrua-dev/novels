@@ -1,6 +1,6 @@
+import User from "../models/user.js";
 import Novel from "../models/novel.js";
 import Genre from "../models/genre.js";
-import User from "../models/user.js";
 import Review from "../models/review.js";
 
 import { v2 as cloudinary } from "cloudinary";
@@ -9,7 +9,6 @@ export const createNovel = async (req, res) => {
   try {
     const { title, description, status, year, author, genres } = req.body;
     let { coverImg } = req.body;
-    const genreArray = [];
 
     if (
       !(title && description && status && year && author && genres.length !== 0)
@@ -22,17 +21,18 @@ export const createNovel = async (req, res) => {
       const uploadResponse = await cloudinary.uploader.upload(coverImg);
       coverImg = uploadResponse.secure_url;
     }
-    for (let index = 0; index < genres.length; index++) {
-      const find = await Genre.findOne({ name: genres[index] });
-      genreArray.push(find._id);
+    for (const genreId of genres) {
+      const find = await Genre.findById(genreId);
+      if (!find) {
+        return res.status(404).json({ error: "Genre not found" });
+      }
     }
-
     const newNovel = new Novel({
       title: title,
       description: description,
       status: status,
       year: year,
-      genres: genreArray,
+      genres: genres,
       author: author,
       coverImg: coverImg,
     });
@@ -40,6 +40,44 @@ export const createNovel = async (req, res) => {
     res.status(201).json(newNovel);
   } catch (error) {
     console.log("Error in createNovel: ", error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const updateNovel = async (req, res) => {
+  try {
+    const novelId = req.params.id;
+    const { title, description, status, year, author, genres } = req.body;
+
+    const novel = await Novel.findById(novelId);
+    if (!novel) {
+      return res.status(404).json({ error: "Novel not found" });
+    }
+
+    if (
+      !(title && description && status && year && author && genres.length !== 0)
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Required fields are not filled in" });
+    }
+    for (const genreId of genres) {
+      const find = await Genre.findById(genreId);
+      if (!find) {
+        return res.status(404).json({ error: "Genre not found" });
+      }
+    }
+    await Novel.findByIdAndUpdate(novelId, {
+      title: title,
+      description: description,
+      status: status,
+      year: year,
+      genres: genres,
+      author: author,
+    });
+    res.status(201).json("Ok");
+  } catch (error) {
+    console.log("Error in updateNovel: ", error.message);
     res.status(500).json({ error: error.message });
   }
 };
@@ -175,7 +213,12 @@ export const addStarRating = async (req, res) => {
 
 export const searchForNovel = async (req, res) => {
   try {
-    res.status(200).json(user);
+    const searchQuery = req.params.searchQuery;
+    const novels = await Novel.find({ title: { $regex: searchQuery } });
+    if (novels.length === 0) {
+      return res.status(200).json("Novels not found");
+    }
+    res.status(200).json(novels);
   } catch (error) {
     console.log("Error in searchForNovel: ", error.message);
     res.status(500).json({ error: error.message });
@@ -233,7 +276,7 @@ export const savedUnSavedByUser = async (req, res) => {
     const userId = req.user._id;
     const novelId = req.params.id;
 
-    const novel = await Novel.findById(postId);
+    const novel = await Novel.findById(novelId);
 
     if (!novel) {
       return res.status(404).json({ error: "Novel not found" });
@@ -243,15 +286,15 @@ export const savedUnSavedByUser = async (req, res) => {
 
     if (userSaveNovel) {
       await Novel.updateOne({ _id: novelId }, { $pull: { savedBy: userId } });
-      await User.updateOne({ _id: userId }, { $pull: { saved: novelId } });
+      await User.updateOne({ _id: userId }, { $pull: { saves: novelId } });
 
-      const updatedLikes = novel.savedBy.filter(
+      const updatedSaves = novel.savedBy.filter(
         (id) => id.toString() !== userId.toString()
       );
-      res.status(200).json(updatedLikes);
+      res.status(200).json(updatedSaves);
     } else {
+      await User.updateOne({ _id: userId }, { $push: { saves: novelId } });
       novel.savedBy.push(userId);
-      await User.updateOne({ _id: userId }, { $push: { saved: novelId } });
       await novel.save();
       res.status(200).json(novel.savedBy);
     }
@@ -263,7 +306,7 @@ export const savedUnSavedByUser = async (req, res) => {
 
 export const getNovelsByAuthor = async (req, res) => {
   try {
-    const author = req.params.year;
+    const author = req.params.author;
     const page = parseInt(req.query.page);
     const limit = parseInt(req.query.limit);
     const novels = await Novel.find({ author: author }, null, {
@@ -320,12 +363,3 @@ export const countByAuthor = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
-// export const get = async (req, res) => {
-//   try {
-//     res.status(200).json(user);
-//   } catch (error) {
-//     console.log("Error in : ", error.message);
-//     res.status(500).json({ error: error.message });
-//   }
-// };

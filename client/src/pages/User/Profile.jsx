@@ -12,7 +12,7 @@ import {
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { Link, useParams } from "react-router-dom";
-import ReviewTile from "../components/ReviewTile";
+import ReviewTile from "../../components/ReviewTile";
 
 const Profile = () => {
   const { userId } = useParams();
@@ -52,7 +52,7 @@ const Profile = () => {
   });
 
   return (
-    <Paper className="p-2 mt-4">
+    <Paper className="p-2 my-4">
       {isLoading && (
         <Backdrop
           sx={{
@@ -65,15 +65,15 @@ const Profile = () => {
         </Backdrop>
       )}
       {!isLoading && user && (
-        <Box fullwidth>
+        <Box fullwidth className="mb-10">
           <Box className="flex flex-col w-full px-20 gap-4">
-            <Box className="flex flex-nowrap justify-between items-center w-full px-20">
-              <Typography fontSize={24} fontWeight={700}>
-                User: {user.username}
-              </Typography>
+            <Box className="flex flex-col justify-between items-center w-full px-20 mt-10">
               <Avatar sx={{ width: 96, height: 96 }}>
                 {user.username.charAt(0)}
               </Avatar>
+              <Typography fontSize={24} fontWeight={700}>
+                User: {user.username}
+              </Typography>
             </Box>
             <Box className="mt-4">
               <Typography fontSize={20} fontWeight={700}>
@@ -81,9 +81,6 @@ const Profile = () => {
               </Typography>
               <Typography fontSize={18}>{user.about}</Typography>
             </Box>
-            <Divider component={"div"}>
-              <Typography fontSize={20}>Information</Typography>
-            </Divider>
             <Box className="flex justify-between items-center ">
               <Typography fontSize={18} color={"gray"}>
                 Name:
@@ -111,17 +108,17 @@ const Profile = () => {
             <Divider />
             <Box className="flex justify-between items-center ">
               <Typography fontSize={18} color={"gray"}>
-                Count of reviews:
+                Number of comments:
               </Typography>
               <Typography fontSize={18}>{user.reviews.length}</Typography>
             </Box>
-            <Divider />
 
-            <Box>
-              <Typography fontSize={20} fontWeight={700}>
-                Reviews:
-              </Typography>
-              {user.reviews.length > 0 && userReviews && (
+            <Divider />
+            {user.reviews.length > 0 && userReviews && (
+              <Box>
+                <Typography fontSize={20} fontWeight={700}>
+                  Comments:
+                </Typography>
                 <Box>
                   {userReviews.map((review) => (
                     <Link
@@ -133,12 +130,12 @@ const Profile = () => {
                           : "chapter/" + review.chapter)
                       }
                     >
-                      <ReviewTile review={review} />
+                      <ReviewTile review={review} linksDisabled={true} />
                     </Link>
                   ))}
                 </Box>
-              )}
-            </Box>
+              </Box>
+            )}
           </Box>
         </Box>
       )}

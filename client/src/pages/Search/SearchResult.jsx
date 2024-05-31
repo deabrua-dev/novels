@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import NovelsFeed from "../components/NovelsFeed";
+import NovelsFeed from "../../components/NovelsFeed";
 import {
   Box,
   Skeleton,

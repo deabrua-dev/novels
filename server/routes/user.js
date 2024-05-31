@@ -7,12 +7,14 @@ import {
   getUser,
   getUserByReview,
   getReviews,
+  getSaves,
 } from "../controllers/user.js";
 
 const router = express.Router();
 
 router.get("/users", getUsers);
 router.get("/get/:id", getUser);
+router.get("/saves/:id", checkAuth, getSaves);
 router.get("/reviews/:id", getReviews);
 router.get("/get-by-review/:id", getUserByReview);
 router.get("/profile/:username", checkAuth, getUserProfile);

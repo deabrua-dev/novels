@@ -4,22 +4,29 @@ import { useQuery } from "@tanstack/react-query";
 import { Backdrop, CircularProgress, Container } from "@mui/material";
 
 import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Novel from "./pages/Novel";
-import Genre from "./pages/Genre";
-import Profile from "./pages/Profile";
-import Chapter from "./pages/Chapter";
-import Register from "./pages/Register";
-import CreateNovel from "./pages/CreateNovel";
+import Page404 from "./pages/Page404";
+
+import Login from "./pages/Auth/Login";
+import Register from "./pages/Auth/Register";
+
+import Novel from "./pages/Novel/Novel";
+import Chapter from "./pages/Novel/Chapter";
+import CreateNovel from "./pages/Novel/CreateNovel";
+
+import Profile from "./pages/User/Profile";
+import Saved from "./pages/User/Saved";
+
+import Year from "./pages/Search/Year";
+import Genre from "./pages/Search/Genre";
+import Author from "./pages/Search/Author";
 
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 
 import AnonymousRoute from "./middleware/AnonymousRoute";
 import ModeratorRoute from "./middleware/ModeratorRoute";
-import Author from "./pages/Author";
-import Year from "./pages/Year";
-import Page404 from "./pages/Page404";
+import PrivateRoute from "./middleware/PrivateRoute";
+import EditNovel from "./pages/Novel/EditNovel";
 
 function App() {
   const { data: authUser, isLoading } = useQuery({
@@ -70,6 +77,10 @@ function App() {
           </Route>
           <Route Route element={<ModeratorRoute />}>
             <Route path="/add-novel" element={<CreateNovel />} />
+            <Route path="/update/:novelId" element={<EditNovel />} />
+          </Route>
+          <Route Route element={<PrivateRoute />}>
+            <Route path="/saved/:userId" element={<Saved />} />
           </Route>
         </Routes>
       </Container>

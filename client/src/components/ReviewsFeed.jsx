@@ -150,7 +150,12 @@ const ReviewsFeed = ({ chapter, novel }) => {
           {!isRefetching && (
             <Box>
               {reviews.map((review) => (
-                <ReviewTile key={review._id} id={review._id} review={review} />
+                <ReviewTile
+                  key={review._id}
+                  id={review._id}
+                  review={review}
+                  linksDisabled={false}
+                />
               ))}
               <Pagination
                 count={Math.ceil(

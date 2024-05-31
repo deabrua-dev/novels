@@ -18,8 +18,9 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import MDEditor from "@uiw/react-md-editor";
 import { Link, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
-import ReviewsFeed from "../components/ReviewsFeed";
-import ChaptersFeed from "../components/ChaptersFeed";
+
+import ReviewsFeed from "../../components/ReviewsFeed";
+import ChaptersFeed from "../../components/ChaptersFeed";
 
 const Novel = () => {
   const { data: authUser } = useQuery({ queryKey: ["authUser"] });
@@ -28,9 +29,10 @@ const Novel = () => {
   const [chapterBody, setChapterBody] = useState("");
   const [chapterTitle, setChapterTitle] = useState("");
   const [rating, setRating] = useState(0.0);
+  const [open, setOpen] = useState(false);
 
   const getGenres = useQuery({
-    queryKey: ["genres"],
+    queryKey: ["genres" + novelId],
     queryFn: async () => {
       try {
         const res = await fetch("/api/novel/genres/" + novelId);
@@ -51,7 +53,7 @@ const Novel = () => {
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["novel"],
+    queryKey: [novelId],
     queryFn: async () => {
       try {
         const res = await fetch("/api/novel/get/" + novelId);
@@ -117,6 +119,9 @@ const Novel = () => {
         throw new Error(error);
       }
     },
+    onSuccess: () => {
+      refetch();
+    },
     onError: (error) => {
       toast.error(error.message);
     },
@@ -144,6 +149,38 @@ const Novel = () => {
     },
     onSuccess: () => {
       toast.success("Chapter created successfully");
+      handleClose();
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const { mutate: saveNovel } = useMutation({
+    mutationFn: async () => {
+      try {
+        if (!authUser) {
+          throw new Error("User not found");
+        }
+        const res = await fetch("/api/novel/save/" + novelId, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || "Something went wrong");
+        }
+
+        return data;
+      } catch (error) {
+        throw new Error(error);
+      }
+    },
+    onSuccess: () => {
+      refetch();
     },
     onError: (error) => {
       toast.error(error.message);
@@ -163,6 +200,14 @@ const Novel = () => {
 
   const handleNovelSave = (e) => {
     e.preventDefault();
+    saveNovel();
+  };
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => {
+    setChapterTitle("");
+    setChapterBody("");
+    setOpen(false);
   };
 
   const onPageLoad = () => {
@@ -183,14 +228,6 @@ const Novel = () => {
       setRating(currentRating);
     }
   }, [novel]);
-
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => {
-    setChapterTitle("");
-    setChapterBody("");
-    setOpen(false);
-  };
 
   return (
     <Paper className="py-5 px-10 mt-4">
@@ -220,7 +257,7 @@ const Novel = () => {
           </Grid>
           <Grid
             item
-            xs={6}
+            xs={8}
             container
             direction={"column"}
             justifyContent={"space-between"}
@@ -271,11 +308,10 @@ const Novel = () => {
                   ))}
                 </Box>
               )}
-
               <Box>
                 {(isPending || isLoading) && (
                   <Box className="flex items-center gap-2">
-                    <Rating value={rating} precision={0.5} readOnly />
+                    <Rating value={parseFloat(rating)} precision={0.5} readOnly />
                     <Typography fontSize={20}>
                       {parseFloat(rating).toFixed(2)}
                     </Typography>
@@ -285,7 +321,7 @@ const Novel = () => {
                 {!isPending && authUser && (
                   <Box className="flex items-center gap-2">
                     <Rating
-                      value={rating}
+                      value={parseFloat(rating)}
                       onChange={(e) => handleRatingSet(e)}
                       precision={0.5}
                     />
@@ -298,7 +334,7 @@ const Novel = () => {
                 {!isPending && !authUser && (
                   <Box className="flex items-center gap-2">
                     <Rating
-                      value={rating}
+                      value={parseFloat(rating)}
                       onChange={(e) => handleRatingSet(e)}
                       precision={0.5}
                       readOnly
@@ -325,13 +361,35 @@ const Novel = () => {
                 >
                   Read
                 </Button>
-                {authUser && (
+                {authUser &&
+                  !Array.from(novel.savedBy).includes(authUser._id) && (
+                    <Button
+                      variant="contained"
+                      size="large"
+                      onClick={handleNovelSave}
+                    >
+                      Add to library
+                    </Button>
+                  )}
+                {authUser &&
+                  Array.from(novel.savedBy).includes(authUser._id) && (
+                    <Button
+                      variant="contained"
+                      size="large"
+                      onClick={handleNovelSave}
+                      color="error"
+                    >
+                      Remove from library
+                    </Button>
+                  )}
+                {authUser && authUser.isModerator && (
                   <Button
                     variant="contained"
                     size="large"
-                    onClick={handleNovelSave}
+                    component={Link}
+                    to={"/update/" + novel._id}
                   >
-                    Add to library
+                    Edit novel
                   </Button>
                 )}
                 {authUser && authUser.isModerator && (
@@ -403,7 +461,7 @@ const Novel = () => {
                   size="medium"
                   onClick={handleChapterSave}
                 >
-                  Save
+                  {isPending ? "Loading..." : "Save"}
                 </Button>
                 <Button variant="contained" size="medium" onClick={handleClose}>
                   Cancel

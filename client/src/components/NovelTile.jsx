@@ -6,11 +6,10 @@ import {
   Typography,
   Rating,
   CardActionArea,
+  Divider,
 } from "@mui/material";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { useState } from "react";
-import toast from "react-hot-toast";
 
 const NovelTile = ({ novel }) => {
   const currentRating = novel.starRating
@@ -18,23 +17,13 @@ const NovelTile = ({ novel }) => {
       novel.starRating.length
     : 0;
 
-  const [rating, setRating] = useState(currentRating);
-
-  const queryClient = useQueryClient();
-  const { mutate: ratingNovel, isPending } = useMutation({
-    mutationFn: async () => {
+  const getGenres = useQuery({
+    queryKey: ["genres" + novel._id],
+    queryFn: async () => {
       try {
-        const res = await fetch(`/api/novel/rating/${novel._id}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            rating: rating,
-          }),
-        });
-
+        const res = await fetch("/api/novel/genres/" + novel._id);
         const data = await res.json();
+        if (data.error) return null;
         if (!res.ok) {
           throw new Error(data.error || "Something went wrong");
         }
@@ -43,25 +32,7 @@ const NovelTile = ({ novel }) => {
         throw new Error(error);
       }
     },
-    onSuccess: (starRating) => {
-      queryClient.setQueryData(["novels"], (oldData) => {
-        return oldData.map((n) => {
-          if (n._id === novel._id) {
-            return { ...n, starRating: starRating };
-          }
-          return n;
-        });
-      });
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
   });
-  const handleRatingSet = (e) => {
-    e.preventDefault();
-    setRating(e.target.value);
-    ratingNovel();
-  };
 
   return (
     <Card className="flex flex-col p-4 my-4">
@@ -100,14 +71,48 @@ const NovelTile = ({ novel }) => {
               );
             })}
           </Typography>
-          <Box className="mt-2">
+          <Box className="mt-2 flex items-center gap-2">
             <Rating
               name="half-rating"
-              value={rating}
-              onChange={(e) => handleRatingSet(e)}
+              value={currentRating}
               precision={0.5}
               readOnly
             />
+            <Typography>{parseFloat(currentRating).toFixed(2)}</Typography>
+            <Typography>({novel.starRating.length} ratings)</Typography>
+          </Box>
+          <Box className="mt-2 flex gap-2">
+            <Box className="flex gap-2">
+              <Typography fontSize={14} color={"gray"}>
+                Author:{" "}
+              </Typography>
+              <Link to={"/author/" + novel.author}>
+                <Typography
+                  fontSize={14}
+                  className="no-underline hover:underline hover:text-cyan-600"
+                >
+                  {novel.author}
+                </Typography>
+              </Link>
+            </Box>
+            {!getGenres.isLoading && getGenres.data && (
+              <Box className="flex gap-2">
+                <Divider orientation="vertical" />
+                <Typography fontSize={14} color={"gray"}>
+                  Genres:
+                </Typography>
+                {getGenres.data.map((genre) => (
+                  <Link key={genre._id} to={"/genre/" + genre._id}>
+                    <Typography
+                      fontSize={14}
+                      className="no-underline hover:underline hover:text-cyan-600"
+                    >
+                      {genre.name}
+                    </Typography>
+                  </Link>
+                ))}
+              </Box>
+            )}
           </Box>
         </CardContent>
       </Box>

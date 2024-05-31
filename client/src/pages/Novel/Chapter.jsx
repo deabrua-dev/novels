@@ -11,7 +11,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
-import ReviewsFeed from "../components/ReviewsFeed";
+import ReviewsFeed from "../../components/ReviewsFeed";
 
 import { ChatBubble, Visibility } from "@mui/icons-material";
 

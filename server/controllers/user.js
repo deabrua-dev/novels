@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import { v2 as cloudinary } from "cloudinary";
 
 import User from "../models/user.js";
+import Novel from "../models/novel.js";
 import Review from "../models/review.js";
 
 export const getUserProfile = async (req, res) => {
@@ -132,6 +133,32 @@ export const getReviews = async (req, res) => {
     }
     const reviews = await Review.find({ user: user }).sort({ createdAt: -1 });
     res.status(200).json(reviews);
+  } catch (error) {
+    console.log("Error in getReviews: ", error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getSaves = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const user = await User.findById(userId);
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    const novels = await Novel.find(
+      {
+        savedBy: { $elemMatch: { $eq: userId } },
+      },
+      null,
+      {
+        skip: page * limit,
+        limit: limit,
+      }
+    );
+    res.status(200).json(novels);
   } catch (error) {
     console.log("Error in getReviews: ", error.message);
     res.status(500).json({ error: error.message });

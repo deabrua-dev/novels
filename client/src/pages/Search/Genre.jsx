@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import NovelsFeed from "../components/NovelsFeed";
+import NovelsFeed from "../../components/NovelsFeed";
 import {
   Box,
   Skeleton,
@@ -11,17 +11,37 @@ import {
 } from "@mui/material";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
-import { Navigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-const Year = () => {
-  const { year } = useParams();
+const Genre = () => {
+  const { genreId } = useParams();
   const [page, setPage] = useState(1);
   const limit = 10;
-  const { data: novels_l } = useQuery({
-    queryKey: ["novels_l" + year],
+  const { data: genre } = useQuery({
+    queryKey: ["genre" + genreId],
     queryFn: async () => {
       try {
-        const res = await fetch("/api/novel/countByYear/" + year);
+        const res = await fetch("/api/genre/" + genreId);
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || "Something went wrong");
+        }
+
+        return data;
+      } catch (error) {
+        throw new Error(error);
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+  const { data: novels_l } = useQuery({
+    queryKey: ["novels_l" + genreId],
+    queryFn: async () => {
+      try {
+        const res = await fetch("/api/genre/countNovels/" + genreId);
         const data = await res.json();
 
         if (!res.ok) {
@@ -47,7 +67,12 @@ const Year = () => {
     queryFn: async () => {
       try {
         const res = await fetch(
-          "/api/novel/year/" + year + "?page=" + (page - 1) + "&limit=" + limit
+          "/api/genre/novels/" +
+            genreId +
+            "?page=" +
+            (page - 1) +
+            "&limit=" +
+            limit
         );
         const data = await res.json();
 
@@ -59,6 +84,9 @@ const Year = () => {
       } catch (error) {
         throw new Error(error);
       }
+    },
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
   useEffect(() => {
@@ -84,10 +112,9 @@ const Year = () => {
           <Skeleton variant="rectengular" height={232} />
         </Box>
       )}
-      {!isLoading && !novels && <Navigate to={"/404"} />}
       {!isLoading && !isRefetching && novels && (
         <Box>
-          <Typography variant="h4">Year: {year}</Typography>
+          <Typography variant="h4">Genre: {genre.name}</Typography>
           <NovelsFeed novels={novels} />
           <Pagination
             count={Math.ceil(parseInt(novels_l) / limit)}
@@ -101,4 +128,4 @@ const Year = () => {
   );
 };
 
-export default Year;
+export default Genre;

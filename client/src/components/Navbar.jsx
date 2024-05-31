@@ -16,7 +16,7 @@ import {
   Box,
 } from "@mui/material";
 
-import { Logout, Bookmark, AccountCircle, Sms } from "@mui/icons-material";
+import { Logout, Bookmark, AccountCircle } from "@mui/icons-material";
 
 import SearchBar from "@mkyy/mui-search-bar";
 
@@ -40,8 +40,8 @@ const Navbar = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const queryClient = useQueryClient();
 
+  const queryClient = useQueryClient();
   const { mutate: logout } = useMutation({
     mutationFn: async () => {
       try {
