@@ -16,7 +16,7 @@ import { useParams } from "react-router-dom";
 const Author = () => {
   const { author } = useParams();
   const [page, setPage] = useState(1);
-  const limit = 10;
+  const limit = 5;
 
   const { data: novels_l } = useQuery({
     queryKey: ["novels_l" + author],
@@ -78,7 +78,7 @@ const Author = () => {
   };
   return (
     <Paper className="flex flex-col flex-nowrap gap-4 p-2 mt-4">
-      {isLoading && (
+      {(isLoading || isRefetching) && (
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={true}

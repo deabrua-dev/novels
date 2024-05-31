@@ -1,4 +1,4 @@
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
@@ -22,12 +22,13 @@ import SearchBar from "@mkyy/mui-search-bar";
 
 const Navbar = () => {
   const { data: authUser } = useQuery({ queryKey: ["authUser"] });
+  const navigate = useNavigate();
 
   const [searchData, setSearchData] = useState("");
 
   const handleSearchRequest = () => {
     if (searchData.length !== 0) {
-      console.log("Test", searchData);
+      navigate("/search/" + searchData);
     }
   };
 
@@ -104,7 +105,9 @@ const Navbar = () => {
                   aria-haspopup="true"
                   aria-expanded={open ? "true" : undefined}
                 >
-                  <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+                  <Avatar sx={{ width: 40, height: 40 }}>
+                    {authUser.username.charAt(0)}
+                  </Avatar>
                 </IconButton>
                 <Menu
                   id="account_menu"
@@ -162,12 +165,6 @@ const Navbar = () => {
                     </ListItemIcon>
                     <ListItemText>Saved</ListItemText>
                   </MenuItem>
-                  {/* <MenuItem onClick={handleClose}>
-                    <ListItemIcon>
-                      <Sms sx={{ height: 30, width: 30 }} />
-                    </ListItemIcon>
-                    <ListItemText>Reviews</ListItemText>
-                  </MenuItem> */}
                   <Divider />
                   <MenuItem
                     onClick={(e) => {

@@ -16,7 +16,7 @@ import { useParams } from "react-router-dom";
 const Genre = () => {
   const { genreId } = useParams();
   const [page, setPage] = useState(1);
-  const limit = 10;
+  const limit = 5;
   const { data: genre } = useQuery({
     queryKey: ["genre" + genreId],
     queryFn: async () => {
@@ -97,7 +97,7 @@ const Genre = () => {
   };
   return (
     <Paper className="flex flex-col flex-nowrap gap-4 p-2 mt-4">
-      {isLoading && (
+      {(isLoading || isRefetching) && (
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={true}

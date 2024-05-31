@@ -214,11 +214,30 @@ export const addStarRating = async (req, res) => {
 export const searchForNovel = async (req, res) => {
   try {
     const searchQuery = req.params.searchQuery;
-    const novels = await Novel.find({ title: { $regex: searchQuery } });
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const novels = await Novel.find({ title: { $regex: searchQuery } }, null, {
+      skip: page * limit,
+      limit: limit,
+    });
     if (novels.length === 0) {
       return res.status(200).json("Novels not found");
     }
     res.status(200).json(novels);
+  } catch (error) {
+    console.log("Error in searchForNovel: ", error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const countSearch = async (req, res) => {
+  try {
+    const searchQuery = req.params.searchQuery;
+    const novels = await Novel.find({ title: { $regex: searchQuery } });
+    if (novels.length === 0) {
+      return res.status(200).json("Novels not found");
+    }
+    res.status(200).json(novels.length);
   } catch (error) {
     console.log("Error in searchForNovel: ", error.message);
     res.status(500).json({ error: error.message });

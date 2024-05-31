@@ -40,7 +40,7 @@ const ReviewTile = ({ review, linksDisabled }) => {
             <Grid item>
               {linksDisabled ? (
                 <IconButton size="small" disabled={linksDisabled}>
-                  {user.profileImg && <Avatar sx={{ width: 35, height: 35 }} />}
+                  {user.profileImg && <Avatar sx={{ width: 40, height: 40 }} />}
                   <Avatar sx={{ width: 40, height: 40 }}>
                     {user.username.charAt(0)}
                   </Avatar>
@@ -51,7 +51,7 @@ const ReviewTile = ({ review, linksDisabled }) => {
                   component={Link}
                   to={"/profile/" + user._id}
                 >
-                  {user.profileImg && <Avatar sx={{ width: 35, height: 35 }} />}
+                  {user.profileImg && <Avatar sx={{ width: 40, height: 40 }} />}
                   <Avatar sx={{ width: 40, height: 40 }}>
                     {user.username.charAt(0)}
                   </Avatar>
@@ -70,7 +70,6 @@ const ReviewTile = ({ review, linksDisabled }) => {
                   </Typography>
                 </Link>
               )}
-
               <Typography fontSize={18}>{review.body}</Typography>
               <Typography color={"gray"}>
                 {dayjs(review.createdAt).fromNow()}

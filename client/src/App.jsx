@@ -27,6 +27,7 @@ import AnonymousRoute from "./middleware/AnonymousRoute";
 import ModeratorRoute from "./middleware/ModeratorRoute";
 import PrivateRoute from "./middleware/PrivateRoute";
 import EditNovel from "./pages/Novel/EditNovel";
+import SearchResult from "./pages/Search/SearchResult";
 
 function App() {
   const { data: authUser, isLoading } = useQuery({
@@ -71,6 +72,7 @@ function App() {
           <Route path="/author/:author" element={<Author />} />
           <Route path="/profile/:userId" element={<Profile />} />
           <Route path="/chapter/:chapterId" element={<Chapter />} />
+          <Route path="/search/:searchQuery" element={<SearchResult />} />
           <Route element={<AnonymousRoute />}>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />

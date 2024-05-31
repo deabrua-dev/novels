@@ -17,6 +17,7 @@ import {
   countByYear,
   countByAuthor,
   updateNovel,
+  countSearch,
 } from "../controllers/novel.js";
 import { checkAuth } from "../middleware/checkAuth.js";
 
@@ -35,6 +36,8 @@ router.get("/author/:author", getNovelsByAuthor);
 
 router.get("/countByYear/:year", countByYear);
 router.get("/countByAuthor/:author", countByAuthor);
+router.get("/search/:searchQuery", searchForNovel);
+router.get("/countSearch/:searchQuery", countSearch);
 
 router.post("/addViewCount/:id", addViewCount);
 router.post("/create", checkAuth, createNovel);
@@ -43,6 +46,5 @@ router.post("/save/:id", checkAuth, savedUnSavedByUser);
 router.post("/unsave/:id", checkAuth, savedUnSavedByUser);
 router.post("/review/:id", checkAuth, reviewOnNovel);
 router.post("/rating/:id", checkAuth, addStarRating);
-router.post("/search/:searchQuery", searchForNovel);
 
 export default router;

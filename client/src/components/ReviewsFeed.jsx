@@ -1,5 +1,5 @@
 import { Box, Typography, Pagination, Button } from "@mui/material";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import ReviewTile from "./ReviewTile";
 import { useEffect, useState } from "react";

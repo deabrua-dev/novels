@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import {
   Box,
-  Skeleton,
   Backdrop,
   CircularProgress,
   Paper,
@@ -9,7 +8,6 @@ import {
   Avatar,
   Divider,
 } from "@mui/material";
-import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { Link, useParams } from "react-router-dom";
 import ReviewTile from "../../components/ReviewTile";

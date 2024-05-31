@@ -12,9 +12,8 @@ import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 
 const Home = () => {
-  const { data: authUser } = useQuery({ queryKey: ["authUser"] });
   const [page, setPage] = useState(1);
-  const limit = 2;
+  const limit = 5;
   const { data: novels_l } = useQuery({
     queryKey: ["novels_l"],
     queryFn: async () => {

@@ -5,7 +5,6 @@ import {
   Typography,
   Backdrop,
   CardContent,
-  Divider,
 } from "@mui/material";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -17,8 +16,6 @@ const ChaptersFeed = ({ novel }) => {
   const {
     data: chapters,
     isLoading,
-    refetch,
-    isRefetching,
   } = useQuery({
     queryKey: ["chapters"],
     queryFn: async () => {
