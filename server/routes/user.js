@@ -17,7 +17,8 @@ router.get("/get/:id", getUser);
 router.get("/saves/:id", checkAuth, getSaves);
 router.get("/reviews/:id", getReviews);
 router.get("/get-by-review/:id", getUserByReview);
-router.get("/profile/:username", checkAuth, getUserProfile);
+router.get("/profile/:userId", getUserProfile);
+
 router.post("/update", checkAuth, updateUser);
 
 export default router;

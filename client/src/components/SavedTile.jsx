@@ -56,7 +56,7 @@ const SavedTile = ({ novel }) => {
         if (!authUser) {
           throw new Error("User not found");
         }
-        const res = await fetch("/api/novel/unsave/" + novel._id, {
+        const res = await fetch("/api/novel/save/" + novel._id, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

@@ -7,9 +7,9 @@ import Review from "../models/review.js";
 
 export const getUserProfile = async (req, res) => {
   try {
-    const { username } = req.params;
+    const { userId } = req.params;
 
-    const user = await User.findOne({ username }).select("-password");
+    const user = await User.findById({ userId }).select("-password");
     if (!user) return res.status(404).json({ message: "User not found" });
 
     res.status(200).json(user);
@@ -132,7 +132,13 @@ export const getReviews = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
     const reviews = await Review.find({ user: user }).sort({ createdAt: -1 });
-    res.status(200).json(reviews);
+    if (reviews.length === 0) {
+      return res.status(404).json({ error: "Reviews not found" });
+    }
+    const total_reviews = await Review.find({ user: user });
+    res
+      .status(200)
+      .json({ pageData: reviews, totalCount: total_reviews.length });
   } catch (error) {
     console.log("Error in getReviews: ", error.message);
     res.status(500).json({ error: error.message });
@@ -158,9 +164,16 @@ export const getSaves = async (req, res) => {
         limit: limit,
       }
     );
-    res.status(200).json(novels);
+    if (novels.length === 0) {
+      return res.status(404).json({ error: "Novels not found" });
+    }
+    const total_novels = await Novel.find({
+      savedBy: { $elemMatch: { $eq: userId } },
+    });
+
+    res.status(200).json({ pageData: novels, totalCount: total_novels.length });
   } catch (error) {
-    console.log("Error in getReviews: ", error.message);
+    console.log("Error in getSaves: ", error.message);
     res.status(500).json({ error: error.message });
   }
 };

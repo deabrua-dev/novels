@@ -7,21 +7,33 @@ import {
   Typography,
   Avatar,
   Divider,
+  Pagination,
+  Skeleton,
 } from "@mui/material";
 import dayjs from "dayjs";
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import ReviewTile from "../../components/ReviewTile";
+import { useEffect, useState } from "react";
 
 const Profile = () => {
   const { userId } = useParams();
+  const [page, setPage] = useState(1);
+  const limit = 5;
 
-  const { data: user, isLoading } = useQuery({
-    queryKey: ["getUserProfile"],
+  const {
+    data: user,
+    isLoading,
+    isPending,
+    isError,
+  } = useQuery({
+    queryKey: ["getUserProfile" + userId],
     queryFn: async () => {
       try {
         const res = await fetch("/api/user/get/" + userId);
         const data = await res.json();
-        if (data.error) return null;
+        if (data.error) {
+          throw new Error(data.error || "Something went wrong");
+        }
         if (!res.ok) {
           throw new Error(data.error || "Something went wrong");
         }
@@ -30,8 +42,14 @@ const Profile = () => {
         throw new Error(error);
       }
     },
+    retry: 1,
   });
-  const { data: userReviews } = useQuery({
+
+  const {
+    data: userReviews,
+    isRefetching,
+    refetch,
+  } = useQuery({
     queryKey: ["userReviews"],
     queryFn: async () => {
       try {
@@ -49,9 +67,17 @@ const Profile = () => {
     },
   });
 
+  useEffect(() => {
+    refetch();
+  }, [page, refetch]);
+
+  const handlePageChange = (e, value) => {
+    setPage(value);
+  };
+
   return (
     <Paper className="p-2 my-4">
-      {isLoading && (
+      {(isLoading || isPending) && (
         <Backdrop
           sx={{
             color: "#fff",
@@ -61,6 +87,9 @@ const Profile = () => {
         >
           <CircularProgress color="inherit" />
         </Backdrop>
+      )}
+      {(isLoading || isPending) && (
+        <Skeleton variant="rectengular" height={400} />
       )}
       {!isLoading && user && (
         <Box fullwidth className="mb-10">
@@ -112,31 +141,42 @@ const Profile = () => {
             </Box>
 
             <Divider />
-            {user.reviews.length > 0 && userReviews && (
-              <Box>
-                <Typography fontSize={20} fontWeight={700}>
-                  Comments:
-                </Typography>
+            {userReviews &&
+              userReviews.totalCount > 0 &&
+              !(isLoading || isRefetching) && (
                 <Box>
-                  {userReviews.map((review) => (
-                    <Link
-                      key={review._id}
-                      to={
-                        "/" +
-                        (review.novel
-                          ? "novel/" + review.novel
-                          : "chapter/" + review.chapter)
-                      }
-                    >
-                      <ReviewTile review={review} linksDisabled={true} />
-                    </Link>
-                  ))}
+                  <Typography fontSize={20} fontWeight={700}>
+                    Comments:
+                  </Typography>
+                  <Box>
+                    {userReviews.pageData.map((review) => (
+                      <Link
+                        key={review._id}
+                        to={
+                          "/" +
+                          (review.novel
+                            ? "novel/" + review.novel
+                            : "chapter/" + review.chapter)
+                        }
+                      >
+                        <ReviewTile review={review} linksDisabled={true} />
+                      </Link>
+                    ))}
+                    <Pagination
+                      count={Math.ceil(
+                        parseInt(userReviews.totalCount) / limit
+                      )}
+                      page={page}
+                      onChange={handlePageChange}
+                      shape="rounded"
+                    />
+                  </Box>
                 </Box>
-              </Box>
-            )}
+              )}
           </Box>
         </Box>
       )}
+      {isError && <Navigate to={"/404"} />}
     </Paper>
   );
 };

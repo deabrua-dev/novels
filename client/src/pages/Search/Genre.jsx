@@ -18,7 +18,7 @@ const Genre = () => {
   const [page, setPage] = useState(1);
   const limit = 5;
 
-  const { data: genre } = useQuery({
+  const genre = useQuery({
     queryKey: ["genre" + genreId],
     queryFn: async () => {
       try {
@@ -82,7 +82,7 @@ const Genre = () => {
 
   return (
     <Paper className="flex flex-col flex-nowrap gap-4 p-2 mt-4">
-      {(isLoading || isRefetching) && (
+      {(isLoading || isRefetching || genre.isLoading) && (
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={true}
@@ -90,16 +90,16 @@ const Genre = () => {
           <CircularProgress color="inherit" />
         </Backdrop>
       )}
-      {(isLoading || isRefetching) && (
+      {(isLoading || isRefetching || genre.isLoading) && (
         <Box>
           <Skeleton variant="rectengular" height={232} />
           <Skeleton variant="rectengular" height={232} />
           <Skeleton variant="rectengular" height={232} />
         </Box>
       )}
-      {!isLoading && !isRefetching && novels && (
+      {!isLoading && !isRefetching && novels && !genre.isLoading && (
         <Box>
-          <Typography variant="h4">Genre: {genre.name}</Typography>
+          <Typography variant="h4">Genre: {genre.data.name}</Typography>
           <NovelsFeed novels={novels.pageData} />
           <Pagination
             count={Math.ceil(parseInt(novels.totalCount) / limit)}
