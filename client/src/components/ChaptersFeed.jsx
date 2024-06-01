@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {
   Box,
   Card,
@@ -13,10 +14,7 @@ import { Link } from "react-router-dom";
 
 const ChaptersFeed = ({ novel }) => {
   dayjs.extend(relativeTime);
-  const {
-    data: chapters,
-    isLoading,
-  } = useQuery({
+  const { data: chapters, isLoading } = useQuery({
     queryKey: ["chapters"],
     queryFn: async () => {
       try {

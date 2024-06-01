@@ -68,7 +68,7 @@ const Navbar = () => {
   });
 
   return (
-    <Box className="py-2.5 bg-white border">
+    <Box className="py-2.5 bg-slate-200 border">
       <Container maxWidth="lg">
         <Box className="flex justify-between flex-nowrap">
           <Box className="flex flex-none gap-10">

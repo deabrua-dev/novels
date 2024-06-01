@@ -81,7 +81,7 @@ const Genre = () => {
   };
 
   return (
-    <Paper className="flex flex-col flex-nowrap gap-4 p-2 mt-4">
+    <Paper className="flex flex-col flex-nowrap gap-4 p-4 mt-4">
       {(isLoading || isRefetching || genre.isLoading) && (
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}

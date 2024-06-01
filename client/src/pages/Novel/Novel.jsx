@@ -10,6 +10,7 @@ import {
   Modal,
   Paper,
   Rating,
+  Skeleton,
   TextField,
   Typography,
 } from "@mui/material";
@@ -241,6 +242,7 @@ const Novel = () => {
           <CircularProgress color="inherit" />
         </Backdrop>
       )}
+      {isLoading && <Skeleton variant="rectengular" height={1000} />}
       {!isLoading && novel && (
         <Grid container direction={"row"} spacing={2}>
           <Grid item xs={4} justifySelf={"center"}>

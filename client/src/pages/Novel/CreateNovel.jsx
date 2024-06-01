@@ -115,7 +115,7 @@ const CreateNovel = () => {
 
   return (
     <>
-      <Paper className="p-2 mt-4">
+      <Paper className="p-4 mt-4">
         {isLoading && a_genres && a_genres.isLoading && (
           <Backdrop
             sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
