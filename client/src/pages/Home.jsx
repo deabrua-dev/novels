@@ -49,7 +49,7 @@ const Home = () => {
     setPage(value);
   };
   return (
-    <Paper className="flex flex-col flex-nowrap gap-4 px-4 mt-4">
+    <Paper className="flex flex-col flex-nowrap gap-4 px-4 pb-4 mt-4">
       {isLoading && (
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
