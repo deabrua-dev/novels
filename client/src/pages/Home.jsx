@@ -14,26 +14,7 @@ import { useEffect, useState } from "react";
 const Home = () => {
   const [page, setPage] = useState(1);
   const limit = 5;
-  const { data: novels_l } = useQuery({
-    queryKey: ["novels_l"],
-    queryFn: async () => {
-      try {
-        const res = await fetch("/api/novel/count");
-        const data = await res.json();
 
-        if (!res.ok) {
-          throw new Error(data.error || "Something went wrong");
-        }
-
-        return data;
-      } catch (error) {
-        throw new Error(error);
-      }
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
   const {
     data: novels,
     isLoading,
@@ -86,15 +67,13 @@ const Home = () => {
       )}
       {!isLoading && !isRefetching && novels && (
         <Box>
-          <Box>
-            <NovelsFeed novels={novels} />
-            <Pagination
-              count={Math.ceil(parseInt(novels_l) / limit)}
-              page={page}
-              onChange={handlePageChange}
-              shape="rounded"
-            />
-          </Box>
+          <NovelsFeed novels={novels.pageData} />
+          <Pagination
+            count={Math.ceil(parseInt(novels.totalCount) / limit)}
+            page={page}
+            onChange={handlePageChange}
+            shape="rounded"
+          />
         </Box>
       )}
     </Paper>

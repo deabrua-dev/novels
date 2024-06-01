@@ -16,7 +16,7 @@ const Saved = () => {
   const { userId } = useParams();
   const { data: authUser } = useQuery({ queryKey: ["authUser"] });
   const [page, setPage] = useState(1);
-  const limit = 10;
+  const limit = 5;
 
   const {
     data: novels,

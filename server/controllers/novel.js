@@ -128,19 +128,6 @@ export const getAll = async (req, res) => {
   }
 };
 
-export const getCount = async (req, res) => {
-  try {
-    const novels = await Novel.find();
-    if (novels.length === 0) {
-      return res.status(200).json(0);
-    }
-    res.status(200).json(novels.length);
-  } catch (error) {
-    console.log("Error in getCount: ", error.message);
-    res.status(500).json({ error: error.message });
-  }
-};
-
 export const getNovels = async (req, res) => {
   try {
     const page = parseInt(req.query.page);
@@ -149,7 +136,11 @@ export const getNovels = async (req, res) => {
       skip: page * limit,
       limit: limit,
     });
-    res.status(200).json(novels);
+    if (novels.length === 0) {
+      return res.status(200).json(0);
+    }
+    const total_novels = await Novel.find();
+    res.status(200).json({ pageData: novels, totalCount: total_novels.length });
   } catch (error) {
     console.log("Error in : ", error.message);
     res.status(500).json({ error: error.message });
@@ -223,21 +214,8 @@ export const searchForNovel = async (req, res) => {
     if (novels.length === 0) {
       return res.status(200).json("Novels not found");
     }
-    res.status(200).json(novels);
-  } catch (error) {
-    console.log("Error in searchForNovel: ", error.message);
-    res.status(500).json({ error: error.message });
-  }
-};
-
-export const countSearch = async (req, res) => {
-  try {
-    const searchQuery = req.params.searchQuery;
-    const novels = await Novel.find({ title: { $regex: searchQuery } });
-    if (novels.length === 0) {
-      return res.status(200).json("Novels not found");
-    }
-    res.status(200).json(novels.length);
+    const total_novels = await Novel.find({ title: { $regex: searchQuery } });
+    res.status(200).json({ pageData: novels, totalCount: total_novels.length });
   } catch (error) {
     console.log("Error in searchForNovel: ", error.message);
     res.status(500).json({ error: error.message });
@@ -258,10 +236,13 @@ export const getReviews = async (req, res) => {
       limit: limit,
     }).sort({ createdAt: -1 });
 
-    if (reviews.length === 1) {
+    if (reviews.length === 0) {
       return res.status(404).json({ error: "Reviews not found" });
     }
-    res.status(200).json(reviews);
+    const total_reviews = await Review.find({ novel: novelId });
+    res
+      .status(200)
+      .json({ pageData: reviews, totalCount: total_reviews.length });
   } catch (error) {
     console.log("Error in getReviews: ", error.message);
     res.status(500).json({ error: error.message });
@@ -335,7 +316,8 @@ export const getNovelsByAuthor = async (req, res) => {
     if (novels.length === 0) {
       return res.status(404).json({ error: "Novels not found" });
     }
-    res.status(200).json(novels);
+    const total_novels = await Novel.find({ author: author });
+    res.status(200).json({ pageData: novels, totalCount: total_novels.length });
   } catch (error) {
     console.log("Error in getNovelsByAuthor: ", error.message);
     res.status(500).json({ error: error.message });
@@ -354,31 +336,10 @@ export const getNovelsByYear = async (req, res) => {
     if (novels.length === 0) {
       return res.status(404).json({ error: "Novels not found" });
     }
-    res.status(200).json(novels);
+    const total_novels = await Novel.find({ year: year });
+    res.status(200).json({ pageData: novels, totalCount: total_novels.length });
   } catch (error) {
     console.log("Error in getNovelsByYear: ", error.message);
-    res.status(500).json({ error: error.message });
-  }
-};
-
-export const countByYear = async (req, res) => {
-  try {
-    const year = req.params.year;
-    const novels = await Novel.find({ year: year });
-    res.status(200).json(novels.length);
-  } catch (error) {
-    console.log("Error in countByYear: ", error.message);
-    res.status(500).json({ error: error.message });
-  }
-};
-
-export const countByAuthor = async (req, res) => {
-  try {
-    const author = req.params.author;
-    const novels = await Novel.find({ author: author });
-    res.status(200).json(novels.length);
-  } catch (error) {
-    console.log("Error in countByAuthor: ", error.message);
     res.status(500).json({ error: error.message });
   }
 };

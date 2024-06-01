@@ -51,30 +51,12 @@ export const getNovelsWithGenre = async (req, res) => {
     if (novels.length === 0) {
       return res.status(404).json({ error: "Novels not found" });
     }
-    res.status(200).json(novels);
-  } catch (error) {
-    console.log("Error in getNovelsWithGenre: ", error.message);
-    res.status(500).json({ error: error.message });
-  }
-};
-
-export const countNovels = async (req, res) => {
-  try {
-    const genreId = req.params.id;
-    const genre = await Genre.findById(genreId);
-
-    if (!genre) {
-      return res.status(404).json({ error: "Genre not found" });
-    }
-    const novels = await Novel.find({
+    const total_novels = await Novel.find({
       genres: { $elemMatch: { $eq: genreId } },
     });
-    if (novels.length === 0) {
-      return res.status(404).json({ error: "Novels not found" });
-    }
-    res.status(200).json(novels.length);
+    res.status(200).json({ pageData: novels, totalCount: total_novels.length });
   } catch (error) {
-    console.log("Error in countNovels: ", error.message);
+    console.log("Error in getNovelsWithGenre: ", error.message);
     res.status(500).json({ error: error.message });
   }
 };

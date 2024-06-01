@@ -1,4 +1,4 @@
-import { Box, Typography, Pagination, Button } from "@mui/material";
+import { Box, Typography, Pagination, Button, Skeleton } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import ReviewTile from "./ReviewTile";
@@ -145,11 +145,14 @@ const ReviewsFeed = ({ chapter, novel }) => {
           </Button>
         </Box>
       </Box>
+      {(isLoading || isRefetching) && (
+        <Skeleton variant="rectengular" height={170} />
+      )}
       {!isLoading && reviews && (
         <Box>
           {!isRefetching && (
             <Box>
-              {reviews.map((review) => (
+              {reviews.pageData.map((review) => (
                 <ReviewTile
                   key={review._id}
                   id={review._id}
@@ -158,11 +161,7 @@ const ReviewsFeed = ({ chapter, novel }) => {
                 />
               ))}
               <Pagination
-                count={Math.ceil(
-                  chapter
-                    ? parseInt(chapter.reviews.length) / limit
-                    : parseInt(novel.reviews.length) / limit
-                )}
+                count={Math.ceil(parseInt(reviews.totalCount) / limit)}
                 page={page}
                 onChange={handlePageChange}
                 shape="rounded"

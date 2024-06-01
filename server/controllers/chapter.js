@@ -168,10 +168,13 @@ export const getReviews = async (req, res) => {
       limit: limit,
     }).sort({ createdAt: -1 });
 
-    if (reviews.length === 1) {
+    if (reviews.length === 0) {
       return res.status(404).json({ error: "Reviews not found" });
     }
-    res.status(200).json(reviews);
+    const total_reviews = await Review.find({ chapter: chapterId });
+    res
+      .status(200)
+      .json({ pageData: reviews, totalCount: total_reviews.length });
   } catch (error) {
     console.log("Error in : ", error.message);
     res.status(500).json({ error: error.message });

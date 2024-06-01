@@ -9,7 +9,6 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 
@@ -17,26 +16,7 @@ const Year = () => {
   const { year } = useParams();
   const [page, setPage] = useState(1);
   const limit = 5;
-  const { data: novels_l } = useQuery({
-    queryKey: ["novels_l" + year],
-    queryFn: async () => {
-      try {
-        const res = await fetch("/api/novel/countByYear/" + year);
-        const data = await res.json();
 
-        if (!res.ok) {
-          throw new Error(data.error || "Something went wrong");
-        }
-
-        return data;
-      } catch (error) {
-        throw new Error(error);
-      }
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
   const {
     data: novels,
     isLoading,
@@ -88,9 +68,9 @@ const Year = () => {
       {!isLoading && !isRefetching && novels && (
         <Box>
           <Typography variant="h4">Year: {year}</Typography>
-          <NovelsFeed novels={novels} />
+          <NovelsFeed novels={novels.pageData} />
           <Pagination
-            count={Math.ceil(parseInt(novels_l) / limit)}
+            count={Math.ceil(parseInt(novels.totalCount) / limit)}
             page={page}
             onChange={handlePageChange}
             shape="rounded"

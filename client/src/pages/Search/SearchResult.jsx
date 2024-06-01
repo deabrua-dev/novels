@@ -17,33 +17,14 @@ const SearchResult = () => {
   const { searchQuery } = useParams();
   const [page, setPage] = useState(1);
   const limit = 5;
-  const countSearchResult = useQuery({
-    queryKey: ["length" + searchQuery],
-    queryFn: async () => {
-      try {
-        const res = await fetch("/api/novel/countSearch/" + searchQuery);
-        const data = await res.json();
 
-        if (!res.ok) {
-          throw new Error(data.error || "Something went wrong");
-        }
-
-        return data;
-      } catch (error) {
-        throw new Error(error);
-      }
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
   const {
     data: novels,
     isLoading,
     refetch,
     isRefetching,
   } = useQuery({
-    queryKey: ["searchedNovels"],
+    queryKey: ["searchedNovels" + searchQuery],
     queryFn: async () => {
       try {
         const res = await fetch(
@@ -71,8 +52,7 @@ const SearchResult = () => {
   });
   useEffect(() => {
     refetch();
-    countSearchResult.refetch();
-  }, [searchQuery]);
+  }, [searchQuery, refetch]);
   useEffect(() => {
     refetch();
   }, [page, refetch]);
@@ -96,26 +76,20 @@ const SearchResult = () => {
           <Skeleton variant="rectengular" height={232} />
         </Box>
       )}
-      {!isLoading &&
-        !isRefetching &&
-        novels &&
-        !countSearchResult.isRefetching &&
-        countSearchResult.data && (
+      {!isLoading && !isRefetching && novels && (
+        <Box>
+          <Typography variant="h4">Search result for: {searchQuery}</Typography>
           <Box>
-            <Typography variant="h4">
-              Search result for: {searchQuery}
-            </Typography>
-            <Box>
-              <NovelsFeed novels={novels} />
-              <Pagination
-                count={Math.ceil(parseInt(countSearchResult.data) / limit)}
-                page={page}
-                onChange={handlePageChange}
-                shape="rounded"
-              />
-            </Box>
+            <NovelsFeed novels={novels.pageData} />
+            <Pagination
+              count={Math.ceil(parseInt(novels.totalCount) / limit)}
+              page={page}
+              onChange={handlePageChange}
+              shape="rounded"
+            />
           </Box>
-        )}
+        </Box>
+      )}
     </Paper>
   );
 };
