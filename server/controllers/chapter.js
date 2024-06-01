@@ -39,6 +39,35 @@ export const addChapter = async (req, res) => {
   }
 };
 
+export const updateChapter = async (req, res) => {
+  try {
+    const { chapterId, chapterTitle, chapterBody } = req.body;
+
+    const chapter = await Chapter.findById(chapterId);
+    if (!chapter) {
+      return res.status(404).json({ error: "Chapter not found" });
+    }
+
+    if (
+      chapterId.length === 0 &&
+      chapterTitle.length === 0 &&
+      chapterBody.length === 0
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Required fields are not filled in" });
+    }
+    await Chapter.findByIdAndUpdate(chapterId, {
+      title: chapterTitle,
+      body: chapterBody,
+    });
+    res.status(201).json("Ok");
+  } catch (error) {
+    console.log("Error in addChapter: ", error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export const getChapter = async (req, res) => {
   try {
     const chapterId = req.params.id;
@@ -138,7 +167,7 @@ export const getReviews = async (req, res) => {
       skip: page * limit,
       limit: limit,
     }).sort({ createdAt: -1 });
-    
+
     if (reviews.length === 1) {
       return res.status(404).json({ error: "Reviews not found" });
     }

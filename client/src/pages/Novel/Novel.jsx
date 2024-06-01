@@ -127,17 +127,16 @@ const Novel = () => {
     },
   });
 
-  const { mutate: addChapter } = useMutation({
+  const addChapter = useMutation({
     mutationFn: async () => {
       try {
-        const res = await fetch("/api/chapter/add-chapter/", {
+        const res = await fetch("/api/chapter/add/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ novelId, chapterTitle, chapterBody }),
         });
-        console.log(res.body);
         const data = await res.json();
         if (!res.ok) {
           throw new Error(data.error || "Something went wrong");
@@ -195,7 +194,7 @@ const Novel = () => {
 
   const handleChapterSave = (e) => {
     e.preventDefault();
-    addChapter();
+    addChapter.mutate();
   };
 
   const handleNovelSave = (e) => {
@@ -311,7 +310,11 @@ const Novel = () => {
               <Box>
                 {(isPending || isLoading) && (
                   <Box className="flex items-center gap-2">
-                    <Rating value={parseFloat(rating)} precision={0.5} readOnly />
+                    <Rating
+                      value={parseFloat(rating)}
+                      precision={0.5}
+                      readOnly
+                    />
                     <Typography fontSize={20}>
                       {parseFloat(rating).toFixed(2)}
                     </Typography>
@@ -461,7 +464,7 @@ const Novel = () => {
                   size="medium"
                   onClick={handleChapterSave}
                 >
-                  {isPending ? "Loading..." : "Save"}
+                  {addChapter.isPending ? "Loading..." : "Save"}
                 </Button>
                 <Button variant="contained" size="medium" onClick={handleClose}>
                   Cancel
