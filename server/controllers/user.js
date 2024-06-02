@@ -69,21 +69,6 @@ export const updateUser = async (req, res) => {
   }
 };
 
-export const getUsers = async (req, res) => {
-  try {
-    const page = parseInt(req.query.page);
-    const limit = parseInt(req.query.limit);
-    const users = await User.find({}, null, {
-      skip: page * limit,
-      limit: limit,
-    });
-    res.status(200).json(users);
-  } catch (error) {
-    console.log("Error in : ", error.message);
-    res.status(500).json({ error: error.message });
-  }
-};
-
 export const getUser = async (req, res) => {
   try {
     const userId = req.params.id;

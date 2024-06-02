@@ -12,7 +12,6 @@ import {
 
 const router = express.Router();
 
-router.get("/users", getUsers);
 router.get("/get/:id", getUser);
 router.get("/saves/:id", checkAuth, getSaves);
 router.get("/reviews/:id", getReviews);
