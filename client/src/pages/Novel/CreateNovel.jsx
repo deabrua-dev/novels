@@ -12,6 +12,8 @@ import {
   FormControl,
   Backdrop,
   CircularProgress,
+  Typography,
+  Skeleton,
 } from "@mui/material";
 import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -34,9 +36,6 @@ const CreateNovel = () => {
   const { mutate: CreateNovel, isPending } = useMutation({
     mutationFn: async () => {
       try {
-        if (!coverImg) {
-          throw new Error("Image not uploaded.");
-        }
         const year = date.year();
         const res = await fetch("/api/novel/create", {
           method: "POST",
@@ -116,7 +115,7 @@ const CreateNovel = () => {
   return (
     <>
       <Paper className="p-4 mt-4">
-        {isLoading && a_genres && a_genres.isLoading && (
+        {(isLoading || a_genres.isLoading) && (
           <Backdrop
             sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
             open={true}
@@ -124,12 +123,18 @@ const CreateNovel = () => {
             <CircularProgress color="inherit" />
           </Backdrop>
         )}
+        {(isLoading || a_genres.isLoading) && (
+          <Skeleton variant="rectengular" height={500} />
+        )}
         {!isLoading && !a_genres.isLoading && (
           <Box
             className="flex flex-col gap-5"
             component="form"
             onSubmit={handleSubmit}
           >
+            <Typography className="self-center" fontSize={30} fontWeight={700}>
+              Add new novel
+            </Typography>
             {coverImg && (
               <img src={coverImg} alt="Test" height={200} width={150} />
             )}
@@ -154,7 +159,6 @@ const CreateNovel = () => {
                 </Button>
               )}
             </Box>
-
             <br />
             <br />
             <TextField

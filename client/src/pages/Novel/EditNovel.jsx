@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -13,6 +13,7 @@ import {
   Backdrop,
   CircularProgress,
   Typography,
+  Skeleton,
 } from "@mui/material";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -32,6 +33,8 @@ const EditNovel = () => {
   const [date, setDate] = useState(dayjs());
   const [author, setAuthor] = useState("");
   const [genres, setGenres] = useState([]);
+  const [coverImg, setCoverImg] = useState(null);
+  const imgRef = useRef(null);
 
   const { data: novel, isLoading } = useQuery({
     queryKey: [novelId],
@@ -66,6 +69,7 @@ const EditNovel = () => {
             year,
             author,
             genres,
+            coverImg,
           }),
         });
 
@@ -120,8 +124,25 @@ const EditNovel = () => {
       setGenres(Array.from(novel.genres));
       setDate(dayjs(novel.year, "YYYY"));
       setAuthor(novel.author);
+      setCoverImg(novel.coverImg);
     }
-  }, [isLoading]);
+  }, [isLoading, a_genres.isLoading]);
+
+  const handleImgChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setCoverImg(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  const handleClearImage = () => {
+    if (coverImg) {
+      setCoverImg(null);
+    }
+  };
 
   return (
     <>
@@ -134,6 +155,9 @@ const EditNovel = () => {
             <CircularProgress color="inherit" />
           </Backdrop>
         )}
+        {(isLoading || a_genres.isLoading) && (
+          <Skeleton variant="rectengular" height={500} />
+        )}
         {!isLoading && a_genres && !a_genres.isLoading && (
           <Box
             className="flex flex-col gap-5"
@@ -143,6 +167,32 @@ const EditNovel = () => {
             <Typography className="self-center" fontSize={30} fontWeight={700}>
               Edit novel: {novel.title}
             </Typography>
+            {coverImg && (
+              <img src={coverImg} alt="Test" height={200} width={150} />
+            )}
+            <Box className="flex gap-4">
+              <Button variant="contained" size="large" component="label">
+                Load a cover
+                <input
+                  accept="image/png, image/jpeg"
+                  type="file"
+                  hidden
+                  ref={imgRef}
+                  onChange={handleImgChange}
+                />
+              </Button>
+              {coverImg && (
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={handleClearImage}
+                >
+                  Delete Image
+                </Button>
+              )}
+            </Box>
+            <br />
+            <br />
             <TextField
               variant="standard"
               placeholder="Title"

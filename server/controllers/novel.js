@@ -2,6 +2,7 @@ import User from "../models/user.js";
 import Novel from "../models/novel.js";
 import Genre from "../models/genre.js";
 import Review from "../models/review.js";
+import Chapter from "../models/chapter.js";
 
 import { v2 as cloudinary } from "cloudinary";
 
@@ -48,7 +49,7 @@ export const updateNovel = async (req, res) => {
   try {
     const novelId = req.params.id;
     const { title, description, status, year, author, genres } = req.body;
-
+    let { coverImg } = req.body;
     const novel = await Novel.findById(novelId);
     if (!novel) {
       return res.status(404).json({ error: "Novel not found" });
@@ -61,12 +62,34 @@ export const updateNovel = async (req, res) => {
         .status(400)
         .json({ error: "Required fields are not filled in" });
     }
+
+    if (coverImg && coverImg != novel.coverImg) {
+      if (novel.coverImg) {
+        await cloudinary.uploader.destroy(
+          novel.coverImg.split("/").pop().split(".")[0],
+          {
+            resource_type: "image",
+          }
+        );
+      }
+      const uploadResponse = await cloudinary.uploader.upload(coverImg);
+      coverImg = uploadResponse.secure_url;
+    } else if (coverImg && novel.coverImg) {
+      await cloudinary.uploader.destroy(
+        novel.coverImg.split("/").pop().split(".")[0],
+        {
+          resource_type: "image",
+        }
+      );
+    }
+
     for (const genreId of genres) {
       const find = await Genre.findById(genreId);
       if (!find) {
         return res.status(404).json({ error: "Genre not found" });
       }
     }
+
     await Novel.findByIdAndUpdate(novelId, {
       title: title,
       description: description,
@@ -74,6 +97,7 @@ export const updateNovel = async (req, res) => {
       year: year,
       genres: genres,
       author: author,
+      coverImg: coverImg,
     });
     res.status(201).json("Ok");
   } catch (error) {
@@ -340,6 +364,35 @@ export const getNovelsByYear = async (req, res) => {
     res.status(200).json({ pageData: novels, totalCount: total_novels.length });
   } catch (error) {
     console.log("Error in getNovelsByYear: ", error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const deleteNovel = async (req, res) => {
+  try {
+    const novelId = req.params.id;
+    const novel = await Novel.findById(novelId);
+    if (!novel) {
+      return res.status(404).json({ error: "Novel not found" });
+    }
+    if (novel.coverImg) {
+      await cloudinary.uploader.destroy(
+        novel.coverImg.split("/").pop().split(".")[0],
+        {
+          resource_type: "image",
+        }
+      );
+    }
+    for (const chapter of novel.chapters) {
+      await Chapter.findByIdAndDelete(chapter);
+    }
+    for (const user of novel.savedBy) {
+      await User.updateOne({ _id: user }, { $pull: { saves: novelId } });
+    }
+    await Novel.findByIdAndDelete(novelId);
+    res.status(200).json({ message: "Post deleted successfully" });
+  } catch (error) {
+    console.log("Error in getNovel: ", error.message);
     res.status(500).json({ error: error.message });
   }
 };

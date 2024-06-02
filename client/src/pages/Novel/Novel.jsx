@@ -7,6 +7,7 @@ import {
   CircularProgress,
   Divider,
   Grid,
+  IconButton,
   Modal,
   Paper,
   Rating,
@@ -14,10 +15,10 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Mode, Visibility } from "@mui/icons-material";
+import { Delete, Mode, Visibility } from "@mui/icons-material";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import MDEditor from "@uiw/react-md-editor";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import ReviewsFeed from "../../components/ReviewsFeed";
@@ -187,6 +188,36 @@ const Novel = () => {
     },
   });
 
+  const navigate = useNavigate();
+
+  const { mutate: deleteNovel, isPending: isDeleting } = useMutation({
+    mutationFn: async () => {
+      try {
+        if (!authUser && !authUser.isModerator) {
+          throw new Error("Permission denied");
+        }
+        const res = await fetch("/api/novel/" + novelId, {
+          method: "Delete",
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || "Something went wrong");
+        }
+
+        return data;
+      } catch (error) {
+        throw new Error(error);
+      }
+    },
+    onSuccess: () => {
+      toast.apply("Novel deleted successfully");
+      navigate("/");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
   const handleRatingSet = (e) => {
     e.preventDefault();
     setRating(e.target.value);
@@ -210,6 +241,9 @@ const Novel = () => {
     setOpen(false);
   };
 
+  const handleDelete = () => {
+    deleteNovel();
+  };
   const onPageLoad = () => {
     viewCountIncrease();
   };
@@ -231,7 +265,7 @@ const Novel = () => {
 
   return (
     <Paper className="py-5 px-10 mt-4">
-      {isLoading && (
+      {(isLoading || isDeleting) && (
         <Backdrop
           sx={{
             color: "#fff",
@@ -388,19 +422,26 @@ const Novel = () => {
                     </Button>
                   )}
                 {authUser && authUser.isModerator && (
-                  <Button
-                    variant="contained"
-                    size="large"
-                    component={Link}
-                    to={"/update/" + novel._id}
-                  >
-                    Edit novel
-                  </Button>
-                )}
-                {authUser && authUser.isModerator && (
-                  <Button variant="contained" size="large" onClick={handleOpen}>
-                    Add chapter
-                  </Button>
+                  <Box className="flex gap-2">
+                    <Button
+                      variant="contained"
+                      size="large"
+                      component={Link}
+                      to={"/update/" + novel._id}
+                    >
+                      Edit novel
+                    </Button>
+                    <Button
+                      variant="contained"
+                      size="large"
+                      onClick={handleOpen}
+                    >
+                      Add chapter
+                    </Button>
+                    <IconButton onClick={handleDelete}>
+                      <Delete color="disabled" />
+                    </IconButton>
+                  </Box>
                 )}
               </Box>
             </Grid>
