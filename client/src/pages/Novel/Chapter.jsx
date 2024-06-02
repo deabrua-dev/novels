@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import ReviewsFeed from "../../components/ReviewsFeed";
 
@@ -181,6 +181,7 @@ const Chapter = () => {
           <CircularProgress color="inherit" />
         </Backdrop>
       )}
+      {!isLoading && !chapter && <Navigate to={"/404"} />}
       {!isLoading && chapter && (
         <Box className="p-4 flex flex-col gap-4">
           <Box className="flex justify-between">

@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 
 const Genre = () => {
   const { genreId } = useParams();
@@ -97,6 +97,7 @@ const Genre = () => {
           <Skeleton variant="rectengular" height={232} />
         </Box>
       )}
+      {!isLoading && !novels && <Navigate to={"/404"} />}
       {!isLoading && !isRefetching && novels && !genre.isLoading && (
         <Box>
           <Typography variant="h4">Genre: {genre.data.name}</Typography>

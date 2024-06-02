@@ -18,7 +18,7 @@ import {
 import { Delete, Mode, Visibility } from "@mui/icons-material";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import MDEditor from "@uiw/react-md-editor";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import ReviewsFeed from "../../components/ReviewsFeed";
@@ -277,6 +277,7 @@ const Novel = () => {
         </Backdrop>
       )}
       {isLoading && <Skeleton variant="rectengular" height={1000} />}
+      {!isLoading && !novel && <Navigate to={"/404"} />}
       {!isLoading && novel && (
         <Grid container direction={"row"} spacing={2}>
           <Grid item xs={4} justifySelf={"center"}>
