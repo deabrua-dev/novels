@@ -14,6 +14,7 @@ import dayjs from "dayjs";
 import { Link, Navigate, useParams } from "react-router-dom";
 import ReviewTile from "../../components/ReviewTile";
 import { useEffect, useState } from "react";
+import { stringToColor } from "../../stringToColor";
 
 const Profile = () => {
   const { userId } = useParams();
@@ -95,7 +96,13 @@ const Profile = () => {
         <Box fullwidth className="mb-10">
           <Box className="flex flex-col w-full px-20 gap-4">
             <Box className="flex flex-col justify-between items-center w-full px-20 mt-10">
-              <Avatar sx={{ width: 96, height: 96 }}>
+              <Avatar
+                sx={{
+                  width: 96,
+                  height: 96,
+                  bgcolor: stringToColor(user.username),
+                }}
+              >
                 {user.username.charAt(0)}
               </Avatar>
               <Typography fontSize={24} fontWeight={700}>

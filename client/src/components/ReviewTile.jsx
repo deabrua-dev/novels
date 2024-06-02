@@ -10,6 +10,7 @@ import {
   Grid,
 } from "@mui/material";
 import { Link } from "react-router-dom";
+import { stringToColor } from "../stringToColor";
 
 const ReviewTile = ({ review, linksDisabled }) => {
   dayjs.extend(relativeTime);
@@ -41,7 +42,13 @@ const ReviewTile = ({ review, linksDisabled }) => {
               {linksDisabled ? (
                 <IconButton size="small" disabled={linksDisabled}>
                   {user.profileImg && <Avatar sx={{ width: 40, height: 40 }} />}
-                  <Avatar sx={{ width: 40, height: 40 }}>
+                  <Avatar
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      bgcolor: stringToColor(user.username),
+                    }}
+                  >
                     {user.username.charAt(0)}
                   </Avatar>
                 </IconButton>
@@ -52,7 +59,13 @@ const ReviewTile = ({ review, linksDisabled }) => {
                   to={"/profile/" + user._id}
                 >
                   {user.profileImg && <Avatar sx={{ width: 40, height: 40 }} />}
-                  <Avatar sx={{ width: 40, height: 40 }}>
+                  <Avatar
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      bgcolor: stringToColor(user.username),
+                    }}
+                  >
                     {user.username.charAt(0)}
                   </Avatar>
                 </IconButton>

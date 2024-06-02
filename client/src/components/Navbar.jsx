@@ -19,6 +19,7 @@ import {
 import { Logout, Bookmark, AccountCircle } from "@mui/icons-material";
 
 import SearchBar from "@mkyy/mui-search-bar";
+import { stringToColor } from "../stringToColor";
 
 const Navbar = () => {
   const { data: authUser } = useQuery({ queryKey: ["authUser"] });
@@ -105,7 +106,13 @@ const Navbar = () => {
                   aria-haspopup="true"
                   aria-expanded={open ? "true" : undefined}
                 >
-                  <Avatar sx={{ width: 40, height: 40 }}>
+                  <Avatar
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      bgcolor: stringToColor(authUser.username),
+                    }}
+                  >
                     {authUser.username.charAt(0)}
                   </Avatar>
                 </IconButton>
