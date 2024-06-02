@@ -65,7 +65,7 @@ function App() {
       <Container maxWidth="lg">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/404" element={<Page404 />} />
+          <Route path="*" element={<Page404 />} />
           <Route path="/year/:year" element={<Year />} />
           <Route path="/novel/:novelId" element={<Novel />} />
           <Route path="/genre/:genreId" element={<Genre />} />
