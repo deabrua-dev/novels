@@ -136,9 +136,15 @@ const CreateNovel = () => {
               Add new novel
             </Typography>
             {coverImg && (
-              <img src={coverImg} alt="Test" height={200} width={150} />
+              <img
+                className="self-center"
+                src={coverImg}
+                alt="Test"
+                height={300}
+                width={225}
+              />
             )}
-            <Box className="flex gap-4">
+            <Box className="self-center flex gap-4">
               <Button variant="contained" size="large" component="label">
                 Load a cover
                 <input

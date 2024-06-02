@@ -34,23 +34,28 @@ const ReviewTile = ({ review, linksDisabled }) => {
   });
   return (
     <Box>
-      {isLoading && <Box></Box>}
       {!isLoading && review && user && (
         <Paper sx={{ borderRadius: 10, my: 4, mx: 2 }}>
           <Grid container wrap="nowrap" spacing={2} sx={{ px: 4, pb: 2 }}>
             <Grid item>
               {linksDisabled ? (
                 <IconButton size="small" disabled={linksDisabled}>
-                  {user.profileImg && <Avatar sx={{ width: 40, height: 40 }} />}
-                  <Avatar
-                    sx={{
-                      width: 40,
-                      height: 40,
-                      bgcolor: stringToColor(user.username),
-                    }}
-                  >
-                    {user.username.charAt(0)}
-                  </Avatar>
+                  {user.profileImg ? (
+                    <Avatar
+                      sx={{ width: 40, height: 40 }}
+                      src={user.profileImg}
+                    />
+                  ) : (
+                    <Avatar
+                      sx={{
+                        width: 40,
+                        height: 40,
+                        bgcolor: stringToColor(user.username),
+                      }}
+                    >
+                      {user.username.charAt(0)}
+                    </Avatar>
+                  )}
                 </IconButton>
               ) : (
                 <IconButton
@@ -58,16 +63,22 @@ const ReviewTile = ({ review, linksDisabled }) => {
                   component={Link}
                   to={"/profile/" + user._id}
                 >
-                  {user.profileImg && <Avatar sx={{ width: 40, height: 40 }} />}
-                  <Avatar
-                    sx={{
-                      width: 40,
-                      height: 40,
-                      bgcolor: stringToColor(user.username),
-                    }}
-                  >
-                    {user.username.charAt(0)}
-                  </Avatar>
+                  {user.profileImg ? (
+                    <Avatar
+                      sx={{ width: 40, height: 40 }}
+                      src={user.profileImg}
+                    />
+                  ) : (
+                    <Avatar
+                      sx={{
+                        width: 40,
+                        height: 40,
+                        bgcolor: stringToColor(user.username),
+                      }}
+                    >
+                      {user.username.charAt(0)}
+                    </Avatar>
+                  )}
                 </IconButton>
               )}
             </Grid>

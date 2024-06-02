@@ -200,7 +200,7 @@ const Chapter = () => {
               Novel Page
             </Button>
             <Box className="flex gap-2">
-              {authUser.isModerator && (
+              {authUser && authUser.isModerator && (
                 <Button onClick={handleOpen}>Edit</Button>
               )}
               <Button

@@ -62,6 +62,7 @@ const Navbar = () => {
     onSuccess: () => {
       toast.success("Successfully logged out");
       queryClient.invalidateQueries({ queryKey: ["authUser"] });
+      navigate("/");
     },
     onError: () => {
       toast.error("Logout failed");
@@ -106,15 +107,22 @@ const Navbar = () => {
                   aria-haspopup="true"
                   aria-expanded={open ? "true" : undefined}
                 >
-                  <Avatar
-                    sx={{
-                      width: 40,
-                      height: 40,
-                      bgcolor: stringToColor(authUser.username),
-                    }}
-                  >
-                    {authUser.username.charAt(0)}
-                  </Avatar>
+                  {authUser.profileImg ? (
+                    <Avatar
+                      sx={{ width: 40, height: 40 }}
+                      src={authUser.profileImg}
+                    />
+                  ) : (
+                    <Avatar
+                      sx={{
+                        width: 40,
+                        height: 40,
+                        bgcolor: stringToColor(authUser.username),
+                      }}
+                    >
+                      {authUser.username.charAt(0)}
+                    </Avatar>
+                  )}
                 </IconButton>
                 <Menu
                   id="account_menu"
