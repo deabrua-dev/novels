@@ -1,7 +1,7 @@
 import { Toaster } from "react-hot-toast";
 import { Route, Routes } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Backdrop, CircularProgress, Container } from "@mui/material";
+import { Backdrop, Box, CircularProgress, Container } from "@mui/material";
 
 import Home from "./pages/Home";
 import Page404 from "./pages/Page404";
@@ -60,9 +60,9 @@ function App() {
     );
   }
   return (
-    <>
+    <Box className="flex flex-col min-h-screen">
       <Navbar />
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" className="mb-10">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="*" element={<Page404 />} />
@@ -88,7 +88,7 @@ function App() {
       </Container>
       <Footer />
       <Toaster />
-    </>
+    </Box>
   );
 }
 

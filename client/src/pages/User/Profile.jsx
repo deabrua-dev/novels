@@ -171,7 +171,7 @@ const Profile = () => {
   }, [isLoading]);
 
   return (
-    <Paper className="p-2 my-4">
+    <Paper className="p-2 mt-10">
       {(isLoading || isPending || isUpdating) && (
         <Backdrop
           sx={{

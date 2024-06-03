@@ -64,7 +64,7 @@ const Saved = () => {
     navigate("/");
   }
   return (
-    <Paper className="flex flex-col flex-nowrap gap-4 p-2 my-4">
+    <Paper className="flex flex-col flex-nowrap gap-4 p-2 mt-10">
       {(isLoading || isRefetching) && (
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}

@@ -60,7 +60,7 @@ const Author = () => {
   };
 
   return (
-    <Paper className="flex flex-col flex-nowrap gap-4 p-4 mt-4">
+    <Paper className="flex flex-col flex-nowrap gap-4 p-4 mt-10">
       {(isLoading || isRefetching) && (
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}

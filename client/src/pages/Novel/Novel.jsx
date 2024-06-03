@@ -264,7 +264,7 @@ const Novel = () => {
   }, [novel]);
 
   return (
-    <Paper className="py-5 px-10 mt-4">
+    <Paper className="py-5 px-10 mt-10">
       {(isLoading || isDeleting) && (
         <Backdrop
           sx={{

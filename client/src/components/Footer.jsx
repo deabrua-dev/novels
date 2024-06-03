@@ -2,7 +2,7 @@ import { Box, Container, Typography } from "@mui/material";
 
 const Footer = () => {
   return (
-    <Box className="flex bg-slate-200 border mt-10 h-20 bottom-0 relative w-full">
+    <Box className="flex bg-slate-200 border mt-auto h-20 w-full">
       <Container maxWidth="lg">
         <Box className="flex justify-between items-center pt-6">
           <Typography fontSize={18}>
