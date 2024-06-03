@@ -159,7 +159,7 @@ export const getNovels = async (req, res) => {
     const novels = await Novel.find({}, null, {
       skip: page * limit,
       limit: limit,
-    });
+    }).sort({ updatedAt: -1 });
     if (novels.length === 0) {
       return res.status(200).json(0);
     }
@@ -234,7 +234,7 @@ export const searchForNovel = async (req, res) => {
     const novels = await Novel.find({ title: { $regex: searchQuery } }, null, {
       skip: page * limit,
       limit: limit,
-    });
+    }).sort({ updatedAt: -1 });
     if (novels.length === 0) {
       return res.status(200).json("Novels not found");
     }
@@ -336,7 +336,7 @@ export const getNovelsByAuthor = async (req, res) => {
     const novels = await Novel.find({ author: author }, null, {
       skip: page * limit,
       limit: limit,
-    });
+    }).sort({ updatedAt: -1 });
     if (novels.length === 0) {
       return res.status(404).json({ error: "Novels not found" });
     }
@@ -356,7 +356,7 @@ export const getNovelsByYear = async (req, res) => {
     const novels = await Novel.find({ year: year }, null, {
       skip: page * limit,
       limit: limit,
-    });
+    }).sort({ updatedAt: -1 });
     if (novels.length === 0) {
       return res.status(404).json({ error: "Novels not found" });
     }
