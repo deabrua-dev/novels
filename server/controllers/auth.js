@@ -20,6 +20,11 @@ export const register = async (req, res) => {
     if (existingEmail) {
       return res.status(400).json({ error: "Email is already taken" });
     }
+    if (username.length < 5) {
+      return res
+        .status(400)
+        .json({ error: "Username must be at least 5 characters long" });
+    }
 
     if (password.length < 8) {
       return res

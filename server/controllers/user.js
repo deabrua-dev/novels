@@ -22,6 +22,11 @@ export const updateUser = async (req, res) => {
     if (/\s/.test(username)) {
       return res.status(400).json({ error: "Username can`t contain a spaces" });
     }
+    if (username.length < 5) {
+      return res
+        .status(400)
+        .json({ error: "Username must be at least 5 characters long" });
+    }
 
     if (profileImg && profileImg != user.profileImg) {
       if (user.profileImg) {
